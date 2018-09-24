@@ -1,0 +1,457 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Test API",
+        "description": "-",
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "https://apitest.com"
+        }
+    ],
+    "components":{
+        "responses": {
+            "OkResponse":{
+                "description":"Ok",
+                "content":{
+                    "application/json":{
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "ok": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ErrorResponse":{
+                "description":"Error",
+                "content":{
+                    "application/json":{
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string"
+                                },
+                                "errors":{
+                                    "type":"array",
+                                    "items":{
+                                        "type":"object",
+                                        "properties":{
+                                            "code":{
+                                                "type":"string"
+                                            },
+                                            "name":{
+                                                "type":"string"
+                                            },
+                                            "used":{
+                                                "type":"string"
+                                            },
+                                            "format":{
+                                                "type":"string"
+                                            },
+                                            "type":{
+                                                "type":"string"
+                                            },
+                                            "expected":{
+                                                "anyOf": [
+                                                    {
+                                                        "type": "integer"
+                                                    },
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "type": "array"
+                                                    }
+                                                ]
+                                            },
+                                            "value":{
+                                                "anyOf": [
+                                                    {
+                                                        "type": "integer"
+                                                    },
+                                                    {
+                                                        "type": "string"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/request/body": {
+            "post":{
+                "operationId":"testRequestBody",
+                "requestBody":{
+                    "content":{
+                        "application/json":{
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "foo": {
+                                        "type": "string"
+                                    },
+                                    "bar": {
+                                        "type": "integer"
+                                    },
+                                    "person":{
+                                        "type":"object",
+                                        "required":["name"],
+                                        "properties":{
+                                            "name":{
+                                                "type":"string"
+                                            },
+                                            "email":{
+                                                "type":"string",
+                                                "format":"email"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref":"#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/parameters": {
+            "get": {
+                "operationId": "testParameters",
+                "parameters":[
+                    {
+                        "in": "query",
+                        "required":true,
+                        "name": "foo",
+                        "schema": {
+                            "type": "string",
+                            "enum":["aaa","bbb"]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "default",
+                        "schema": {
+                            "type": "integer",
+                            "default":50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref":"#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/path/{foo}": {
+            "get": {
+                "operationId": "testPath",
+                "parameters":[
+                    {
+                        "in": "path",
+                        "name": "foo",
+                        "schema": {
+                            "type": "string",
+                            "enum":["aaa","bbb"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref":"#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/missing/format": {
+            "get": {
+                "operationId":"testMissingFormat",
+                "parameters":[
+                    {
+                        "in":"query",
+                        "name":"test",
+                        "schema": {
+                            "type": "string",
+                            "format":"uid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref":"#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/response/example": {
+            "get": {
+                "operationId":"testResponseExample",
+                "responses": {
+                    "200": {
+                        "description":"Ok",
+                        "content":{
+                            "application/json":{
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "foo": {
+                                            "type": "string"
+                                        },
+                                        "bar": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "example":{
+                                    "foo":"test",
+                                    "bar":100,
+                                    "extra":"-"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            },
+            "post": {
+                "operationId":"testResponseExamplePost",
+                "responses": {
+                    "201": {
+                        "description":"Ok",
+                        "content":{
+                            "application/json":{
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "foo": {
+                                            "type": "string"
+                                        },
+                                        "bar": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "example":{
+                                    "foo":"test",
+                                    "bar":100
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/response/example/list": {
+            "get": {
+                "operationId":"testResponseExampleList",
+                "responses": {
+                    "200": {
+                        "description":"Ok",
+                        "content":{
+                            "application/json":{
+                                "schema": {
+                                    "type": "array",
+                                    "items":{
+                                        "type":"object",
+                                        "properties": {
+                                            "foo": {
+                                                "type": "string"
+                                            },
+                                            "bar": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "example":[{
+                                    "foo":"test",
+                                    "bar":100,
+                                    "extra":"-"
+                                }]
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/formats": {
+            "get": {
+                "operationId":"testDifferentFormats",
+                "parameters":[
+                    {
+                        "in": "query",
+                        "name": "string",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "integer",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "schema": {
+                            "type": "string",
+                            "format":"email"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "phone",
+                        "schema": {
+                            "type": "string",
+                            "pattern":"^\\+[1-9]\\d{1,14}$"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "country-code",
+                        "schema": {
+                            "type": "string",
+                            "format":"country-code"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "ends-with",
+                        "schema": {
+                            "type": "string",
+                            "format":"ends-with('@gmail.com')"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "between",
+                        "schema": {
+                            "type": "integer",
+                            "format":"between(10, 20)"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "customFormat",
+                        "schema": {
+                            "type": "string",
+                            "format":"customFormat"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref":"#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/upload":{
+            "post":{
+                "operationId":"testFileUpload",
+                "requestBody":{
+                    "content":{
+                        "multipart/form-data":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "id":{
+                                        "type":"integer"
+                                    },
+                                    "file":{
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            },
+                            "encoding":{
+                                "file":{
+                                    "contentType": "text/plain, image/png"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref":"#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/path/{foo}/path/{bar}":{
+            "get":{
+                "operationId":"pathParamTest",
+                "parameters":[
+                    {
+                        "in": "path",
+                        "name": "foo",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "bar",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref":"#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        }
+    }
+}
