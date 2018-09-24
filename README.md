@@ -16,7 +16,7 @@ All testing has been done using [Slim Framework](https://github.com/slimphp/Slim
 
 It's recommended that you use [Composer](https://getcomposer.org/download) to install.
 ```shell
-composer require hkarlstrom/openapi-reader
+composer require hkarlstrom/openapi-validation-middleware
 ```
 
 
@@ -131,4 +131,4 @@ or
 
 ## License
 
-The OpenAPI Reader is licensed under the MIT license. See [License File](LICENSE) for more information.
+The OpenAPI Validation Middleware is licensed under the MIT license. See [License File](LICENSE) for more information.
