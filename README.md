@@ -19,6 +19,8 @@ It's recommended that you use [Composer](https://getcomposer.org/download) to in
 composer require hkarlstrom/openapi-validation-middleware
 ```
 
+Use [Swagger/OpenAPI CLI](https://www.npmjs.com/package/swagger-cli) to validate openapi.json file, as the middleware assumes it to be valid.
+
 
 ## Usage
 
