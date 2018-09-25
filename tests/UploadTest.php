@@ -48,6 +48,8 @@ class UploadTest extends TestCase
         ]);
         $json = $this->json($response);
         $this->assertSame('error_content_type', $json['errors'][0]['code']);
+        $this->assertSame('image/png', $json['errors'][0]['used']);
+        $this->assertSame(['text/plain', 'image/jpeg'], $json['errors'][0]['expected']);
     }
 
     protected function json(ResponseInterface $response) : array

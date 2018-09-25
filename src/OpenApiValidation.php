@@ -134,7 +134,11 @@ class OpenApiValidation implements MiddlewareInterface
         if (null === $responseObject) { // Not in file
             return [];
         }
-        $responseSchema = $responseObject->getContent($mediaType)->schema ?? null;
+        $responseSchema = $responseObject->getContent($mediaType)->schema;
+        if (null === $responseSchema) {
+            $mediaType      = $responseObject->getDefaultMediaType();
+            $responseSchema = $responseObject->getContent($mediaType)->schema;
+        }
         if (null === $responseBodyData && $responseSchema) {
             return [['name' => 'responseBody', 'code' => 'error_required']];
         }

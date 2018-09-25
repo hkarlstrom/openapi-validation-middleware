@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b120a584021788cec52f2f3383a82202",
+    "content-hash": "14e247416010aafe2e406ea65206c538",
     "packages": [
         {
             "name": "hkarlstrom/openapi-reader",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hkarlstrom/openapi-reader.git",
-                "reference": "dda4436859e10d922ce0ea2d7bd8c5e78d5a1870"
+                "reference": "874bcc828433136a800e27cc8cc64bae822f229f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/dda4436859e10d922ce0ea2d7bd8c5e78d5a1870",
-                "reference": "dda4436859e10d922ce0ea2d7bd8c5e78d5a1870",
+                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/874bcc828433136a800e27cc8cc64bae822f229f",
+                "reference": "874bcc828433136a800e27cc8cc64bae822f229f",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 }
             ],
             "description": "Library for parsing OpenAPI json documentation files.",
-            "time": "2018-09-21T20:41:34+00:00"
+            "time": "2018-09-25T08:32:16+00:00"
         },
         {
             "name": "opis/json-schema",
