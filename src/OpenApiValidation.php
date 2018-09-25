@@ -341,14 +341,19 @@ class OpenApiValidation implements MiddlewareInterface
     private function setExampleResponse(ServerRequestInterface $request, ResponseInterface $response, string $path, string $method) : ResponseInterface
     {
         if ($responseObject = $this->openapi->getOperationResponse($path, $method)) {
-            $requestBodyData         = $request->getParsedBody();
-            $exampleResponseBodyData = $responseObject->getContent($this->getMediaType($request))->getExample() ?? [];
+            $requestBodyData = $request->getParsedBody();
+            if (null === $mediaType = $this->getMediaType($request)) {
+                $mediaType = $responseObject->getDefaultMediaType();
+            }
+            $exampleResponseBodyData = $responseObject->getContent($mediaType)->getExample() ?? [];
             if (null !== $requestBodyData && !isset($exampleResponseBodyData[0])) {
                 // If the request is a post or put, merge the request data to the example if the example is an object,
                 // just to make the dummy data a bit more like in real life
                 $exampleResponseBodyData = array_merge($exampleResponseBodyData, $requestBodyData);
             }
-            $response = $response->withBody((new StreamFactory())->createStream(json_encode($exampleResponseBodyData)));
+            $response = $response
+                ->withBody((new StreamFactory())->createStream(json_encode($exampleResponseBodyData)))
+                ->withHeader('Content-Type', $mediaType.';charset=utf-8');
             if (is_numeric($responseObject->statusCode)) {
                 $response = $response->withStatus($responseObject->statusCode);
             }
