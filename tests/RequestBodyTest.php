@@ -11,11 +11,25 @@
 
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
+use Opis\JsonSchema\IFormat;
+
+class CustomFormat2 implements IFormat
+{
+    public function validate($data) : bool
+    {
+        error_log('CustomFormat2 validate');
+        return 'OK' === $data;
+    }
+}
+
 class RequestBodyTest extends BaseTest
 {
     public function testRequestBody()
     {
         $response = $this->response('post', '/request/body', [
+            'formats' => [
+                ['string', 'customFormat', new CustomFormat2()],
+            ],
             'body' => [
                 'foo'    => 'test',
                 'bar'    => 123,
@@ -23,6 +37,7 @@ class RequestBodyTest extends BaseTest
                     'name'  => 'Donald',
                     'email' => 'aaa@aaa.com',
                 ],
+                'custom' => 'OK',
             ],
         ]);
         $json = $this->json($response);
@@ -30,6 +45,9 @@ class RequestBodyTest extends BaseTest
         $this->assertSame(200, $response->getStatusCode());
 
         $response = $this->response('post', '/request/body', [
+            'formats' => [
+                ['string', 'customFormat', new CustomFormat2()],
+            ],
             'body' => [
                 'foo'    => 123,
                 'bar'    => 'test',
@@ -37,6 +55,7 @@ class RequestBodyTest extends BaseTest
                     'email' => 'aaaaa.com',
                     'extra' => 'hmm',
                 ],
+                'custom' => 'NOT',
             ],
         ]);
         $json = $this->json($response);
@@ -49,5 +68,7 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('error_required', $errors[2]['code']);
         $this->assertSame('error_format', $errors[3]['code']);
         $this->assertSame('error_additional', $errors[4]['code']);
+        $this->assertSame('error_format', $errors[5]['code']);
+        $this->assertSame('customFormat', $errors[5]['format']);
     }
 }

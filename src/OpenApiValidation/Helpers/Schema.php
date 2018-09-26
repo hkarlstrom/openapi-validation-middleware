@@ -28,13 +28,42 @@ class Schema
 
     public static function getFormats(array $schema) : array
     {
+        $excluded = [
+            'date',
+            'date-time',
+            'email',
+            'idn-email',
+            'hostname',
+            'idn-hostname',
+            'ipv4',
+            'ipv6',
+            'json-pointer',
+            'regex',
+            'relative-json-pointer',
+            'time',
+            'uri',
+            'uri-reference',
+            'uri-template',
+            'iri',
+            'iri-reference',
+        ];
         $formats  = [];
-        $callback = function (array $schema, array &$formats) use (&$callback) : array {
-            if (isset($object['format']) && is_string($object['format'])) {
-                $formats[] = [
-                    'type'   => $object['type'],
-                    'format' => $object['format'],
-                ];
+        $callback = function (array $object, array &$formats) use (&$callback, $excluded) {
+            $type   = $object['type']   ?? null;
+            $format = $object['format'] ?? null;
+            if (null !== $format && ('string' != $type || !in_array($format, $excluded))) {
+                $found = false;
+                foreach ($formats as $f) {
+                    if ($f['type'] == $type && $f['format'] == $format) {
+                        $found = true;
+                    }
+                }
+                if (!$found) {
+                    $formats[] = [
+                        'type'   => $object['type'],
+                        'format' => $object['format'],
+                    ];
+                }
             }
             foreach ($object as $attr => $val) {
                 if (is_array($val)) {
@@ -42,6 +71,7 @@ class Schema
                 }
             }
         };
+        $callback($schema, $formats);
         return $formats;
     }
 

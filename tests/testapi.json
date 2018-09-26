@@ -118,6 +118,10 @@
                                                 "format":"email"
                                             }
                                         }
+                                    },
+                                    "custom":{
+                                        "type":"string",
+                                        "format":"customFormat"
                                     }
                                 }
                             }
