@@ -17,7 +17,6 @@ class CustomFormat2 implements IFormat
 {
     public function validate($data) : bool
     {
-        error_log('CustomFormat2 validate');
         return 'OK' === $data;
     }
 }
