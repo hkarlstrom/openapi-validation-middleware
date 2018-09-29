@@ -158,6 +158,30 @@
                             "type": "integer",
                             "default":50
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "list",
+                        "schema": {
+                            "type": "array",
+                            "items":{
+                                "type":"string",
+                                "enum":["item1","item2"]
+                            }
+                        },
+                        "explode":false
+                    },
+                    {
+                        "in": "query",
+                        "name": "listPipe",
+                        "schema": {
+                            "type": "array",
+                            "items":{
+                                "type":"string",
+                                "enum":["item1","item2"]
+                            }
+                        },
+                        "style":"pipeDelimited"
                     }
                 ],
                 "responses": {

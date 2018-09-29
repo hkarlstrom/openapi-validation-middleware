@@ -134,7 +134,7 @@ class OpenApiValidation implements MiddlewareInterface
         if (null === $responseObject) { // Not in file
             return [];
         }
-        $responseSchema = $responseObject->getContent($mediaType)->schema;
+        $responseSchema = $responseObject->getContent($mediaType)->schema ?? null;
         if (null === $responseSchema) {
             $mediaType      = $responseObject->getDefaultMediaType();
             $responseSchema = $responseObject->getContent($mediaType)->schema;
@@ -175,6 +175,7 @@ class OpenApiValidation implements MiddlewareInterface
     {
         $errors          = [];
         $parameters      = $this->openapi->getOperationParameters($path, $method);
+        $request         = $this->deserialize($request, $pathValues, $parameters);
         $values          = ['path' => $pathValues];
         $values['query'] = $request->getQueryParams();
 
@@ -217,6 +218,45 @@ class OpenApiValidation implements MiddlewareInterface
             }
         }
         return $errors;
+    }
+
+    private function deserialize(ServerRequestInterface $request, array &$pathValues, array $parameters) : ServerRequestInterface
+    {
+        foreach ($parameters as $parameter) {
+            $schema = $parameter->schema;
+            if (!in_array($schema->type,['array','object'])) continue;
+            $name = $parameter->name;
+            switch ($parameter->in) {
+                case 'query':
+                    $queryParams = $request->getQueryParams();
+                    if (!isset($queryParams[$name])) {
+                        continue;
+                    }
+                    $queryParams[$name] = $this->styleValue(
+                        $parameter->in,
+                        $parameter->style,
+                        $parameter->explode,
+                        $queryParams[$name]);
+                    $request = $request->withQueryParams($queryParams);
+                    break;
+            }
+        }
+        return $request;
+    }
+
+    private function styleValue(string $in, string $style, bool $explode, string $value) {
+        switch ($in) {
+            case 'query':
+                switch ($style) {
+                    case 'form':
+                        return !$explode ? explode(',',$value) : $value;
+                    case 'spaceDelimited':
+                        return explode(' ',$value);
+                    case 'pipeDelimited':
+                        return explode('|',$value);
+                }
+        }
+        return $value;
     }
 
     private function validateProperties(array $properties) : ?array

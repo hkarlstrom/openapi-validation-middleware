@@ -118,4 +118,16 @@ class ParametersTest extends BaseTest
         $json     = $this->json($response);
         $this->assertSame(200, $response->getStatusCode());
     }
+
+    public function testStyle()
+    {
+        $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'list' => 'item1,item3']]);
+        $json     = $this->json($response);
+        $this->assertSame('item3',$json['errors'][0]['value']);
+
+        $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'listPipe' => 'item1|item2']]);
+        $json     = $this->json($response);
+        $this->assertTrue($json['ok']);
+
+    }
 }
