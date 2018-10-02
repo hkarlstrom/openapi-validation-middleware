@@ -25,10 +25,10 @@ class RespectValidator implements IFormat
         $parsed          = $this->parseFormat($format);
         $this->validator = $parsed['validator'];
         $this->args      = $parsed['args'];
-        if (!class_exists('\Respect\Validation\Rules\\'.mb_strtoupper($this->validator))) {
+        if (!class_exists('\Respect\Validation\Rules\\'.ucfirst($this->validator))) {
             throw new Exception(sprintf(
                 "Respect\Validation\Validator '%s' not found.",
-                mb_strtoupper($this->validator)
+                ucfirst($this->validator)
             ));
         }
     }
