@@ -144,15 +144,17 @@ class OpenApiValidation implements MiddlewareInterface
         }
         $errors = $this->validateObject($responseSchema, $responseBodyData);
         if ($this->options['stripResponse']) {
-            $notAdditionalErrors = [];
+            $notAdditionalOrNullErrors = [];
             foreach ($errors as $error) {
                 if ('error_additional' == $error['code']) {
                     $responseBodyData = JsonHelper::remove($responseBodyData, explode('.', $error['name']));
+                } elseif ('error_type' && 'null' == $error['used'] && null === $error['value']) {
+                    $responseBodyData = JsonHelper::remove($responseBodyData, explode('.', $error['name']));
                 } else {
-                    $notAdditionalErrors[] = $error;
+                    $notAdditionalOrNullErrors[] = $error;
                 }
             }
-            $errors   = $notAdditionalErrors;
+            $errors   = $notAdditionalOrNullErrors;
             $response = $response->withBody((new StreamFactory())->createStream(json_encode($responseBodyData)));
         }
         return $errors;
@@ -224,7 +226,9 @@ class OpenApiValidation implements MiddlewareInterface
     {
         foreach ($parameters as $parameter) {
             $schema = $parameter->schema;
-            if (!in_array($schema->type,['array','object'])) continue;
+            if (!in_array($schema->type, ['array', 'object'])) {
+                continue;
+            }
             $name = $parameter->name;
             switch ($parameter->in) {
                 case 'query':
@@ -244,16 +248,17 @@ class OpenApiValidation implements MiddlewareInterface
         return $request;
     }
 
-    private function styleValue(string $in, string $style, bool $explode, string $value) {
+    private function styleValue(string $in, string $style, bool $explode, string $value)
+    {
         switch ($in) {
             case 'query':
                 switch ($style) {
                     case 'form':
-                        return !$explode ? explode(',',$value) : $value;
+                        return !$explode ? explode(',', $value) : $value;
                     case 'spaceDelimited':
-                        return explode(' ',$value);
+                        return explode(' ', $value);
                     case 'pipeDelimited':
-                        return explode('|',$value);
+                        return explode('|', $value);
                 }
         }
         return $value;
