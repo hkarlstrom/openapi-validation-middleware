@@ -70,4 +70,12 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('error_format', $errors[5]['code']);
         $this->assertSame('customFormat', $errors[5]['format']);
     }
+
+    public function testEmptyRequestBody()
+    {
+        $response = $this->response('post', '/request/body/empty');
+        $json     = $this->json($response);
+        $this->assertTrue($json['ok']);
+        $this->assertSame(200, $response->getStatusCode());
+    }
 }

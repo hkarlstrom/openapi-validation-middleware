@@ -199,17 +199,19 @@ class OpenApiValidation implements MiddlewareInterface
         $mediaType       = $this->getMediaType($request);
 
         if ($requestBody && $requestMediaType = $requestBody->getContent($mediaType)) {
-            if ($requestBodyData === [] && $requestBody->required) {
+            if (empty($requestBodyData) && $requestBody->required) {
                 $errors[] = ['name' => 'requestBody', 'code' => 'error_required'];
             } else {
                 switch ($mediaType) {
                     case 'application/json':
-                        $objectErrors = $this->validateObject($requestMediaType->schema, $requestBodyData);
-                        foreach ($objectErrors as $error) {
-                            if (!('error_type' == $error['code']
-                                && 'null' == $error['used']
-                                && SchemaHelper::isNullable($requestMediaType->schema, explode('.', $error['name'])))) {
-                                $errors[] = $error;
+                        if (!empty($requestBodyData)) {
+                            $objectErrors = $this->validateObject($requestMediaType->schema, $requestBodyData);
+                            foreach ($objectErrors as $error) {
+                                if (!('error_type' == $error['code']
+                                    && 'null' == $error['used']
+                                    && SchemaHelper::isNullable($requestMediaType->schema, explode('.', $error['name'])))) {
+                                    $errors[] = $error;
+                                }
                             }
                         }
                         break;
