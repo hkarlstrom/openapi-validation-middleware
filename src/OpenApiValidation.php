@@ -148,7 +148,7 @@ class OpenApiValidation implements MiddlewareInterface
             foreach ($errors as $error) {
                 if ('error_additional' == $error['code']) {
                     $responseBodyData = JsonHelper::remove($responseBodyData, explode('.', $error['name']));
-                } elseif ('error_type' && 'null' == $error['used'] && null === $error['value']) {
+                } elseif ('error_type' == $error['code'] && 'null' == $error['used'] && null === $error['value']) {
                     $responseBodyData = JsonHelper::remove($responseBodyData, explode('.', $error['name']));
                 } else {
                     $notAdditionalOrNullErrors[] = $error;
@@ -311,6 +311,12 @@ class OpenApiValidation implements MiddlewareInterface
             $schema = json_decode(json_encode($schema));
             $result = $validator->dataValidation($value, $schema, 99);
         } catch (Exception $e) {
+            return [[
+                'name'    => 'server',
+                'code'    => 'error_server',
+                'message' => $e->getMessage(),
+            ]];
+            return [$e->getMessage()];
         }
         if (!$result->isValid()) {
             foreach ($result->getErrors() as $error) {
