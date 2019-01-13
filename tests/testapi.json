@@ -11,9 +11,24 @@
         }
     ],
     "components":{
+        "headers": {
+            "xResponseId": {
+                "required":true,
+                "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "description": "Unique response ID"
+            }
+        },
         "responses": {
             "OkResponse":{
                 "description":"Ok",
+                "headers": {
+                    "X-Response-Id": {
+                        "$ref": "#/components/headers/xResponseId"
+                    }
+                },
                 "content":{
                     "application/json":{
                         "schema": {
@@ -29,6 +44,11 @@
             },
             "ErrorResponse":{
                 "description":"Error",
+                "headers": {
+                    "X-Response-Id": {
+                        "$ref": "#/components/headers/xResponseId"
+                    }
+                },
                 "content":{
                     "application/json":{
                         "schema": {
