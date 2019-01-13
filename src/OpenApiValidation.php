@@ -163,6 +163,18 @@ class OpenApiValidation implements MiddlewareInterface
                 ];
             }
         }
+        if($errors) {
+            return $errors;
+        }
+
+        // 3. Check header against schemas
+        foreach ($headersSpecifications as $headerName => $specification) {
+            $headerErrors = $this->validateObject($specification['schema'], $responseHeaders[$headerName]);
+            foreach ($headerErrors as &$error) {
+                $error['name'] = $headerName;
+            }
+            $errors = array_merge($errors, $headerErrors);
+        }
 
         return $errors;
     }
