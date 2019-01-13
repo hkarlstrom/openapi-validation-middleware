@@ -45,6 +45,7 @@ class OpenApiValidation implements MiddlewareInterface
         'validateError'          => false,
         'validateRequest'        => true,
         'validateResponse'       => true,
+        'validateResponseHeaders'=> false,
     ];
     private $formatContainer;
 
@@ -118,14 +119,55 @@ class OpenApiValidation implements MiddlewareInterface
         }
 
         if ($this->options['validateResponse']
-            && $errors = $this->validateResponse($response, $path, $method)) {
+            && $errors = $this->validateResponseBody($response, $path, $method)) {
+            return $this->error(500, 'Response validation failed', $errors);
+        }
+
+        if ($this->options['validateResponseHeaders']
+            && $errors = $this->validateResponseHeaders($response, $path, $method)) {
             return $this->error(500, 'Response validation failed', $errors);
         }
 
         return $response;
     }
 
-    public function validateResponse(ResponseInterface &$response, string $path, string $method) : ?array
+    public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : ?array {
+        $responseHeaders = $response->getHeaders();
+        $code             = $response->getStatusCode();
+        $responseObject   = $this->openapi->getOperationResponse($path, $method, $code);
+        $headersSpecifications = $responseObject->headers;
+
+        // 0. No specification for headers means any header allowed, skip the check
+        if (null === $headersSpecifications) { // Not in file
+            return [];
+        }
+
+        $errors = [];
+
+        // 1. Find required headers
+        $requiredHeadersSpecifications = array_filter($headersSpecifications, function(array $headerSpecification){
+            return array_key_exists('required', $headerSpecification) && $headerSpecification['required'];
+        });
+
+        // 2. Find missed required headers
+        $missedHeaderNames = array_diff(
+            array_keys($requiredHeadersSpecifications),
+            array_keys($responseHeaders)
+        );
+        if($missedHeaderNames) {
+            foreach ($missedHeaderNames as $name) {
+                $errors[] = [
+                    'name'    => 'responseHeader',
+                    'code'    => 'error_required',
+                    'message' => $name
+                ];
+            }
+        }
+
+        return $errors;
+    }
+
+    public function validateResponseBody(ResponseInterface &$response, string $path, string $method) : ?array
     {
         $responseBodyData = json_decode($response->getBody()->__toString(), true);
         $code             = $response->getStatusCode();

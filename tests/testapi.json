@@ -15,8 +15,7 @@
             "xResponseId": {
                 "required":true,
                 "schema": {
-                    "type": "string",
-                    "format": "uuid"
+                    "type": "string"
                 },
                 "description": "Unique response ID"
             }
@@ -24,11 +23,6 @@
         "responses": {
             "OkResponse":{
                 "description":"Ok",
-                "headers": {
-                    "X-Response-Id": {
-                        "$ref": "#/components/headers/xResponseId"
-                    }
-                },
                 "content":{
                     "application/json":{
                         "schema": {
@@ -44,11 +38,6 @@
             },
             "ErrorResponse":{
                 "description":"Error",
-                "headers": {
-                    "X-Response-Id": {
-                        "$ref": "#/components/headers/xResponseId"
-                    }
-                },
                 "content":{
                     "application/json":{
                         "schema": {
@@ -286,6 +275,32 @@
                     },
                     "400": {
                         "$ref":"#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/missing/header": {
+            "get": {
+                "operationId":"testMissingHeader",
+                "responses": {
+                    "200": {
+                        "headers": {
+                            "X-Response-Id": {
+                                "$ref": "#/components/headers/xResponseId"
+                            }
+                        },
+                        "content":{
+                            "application/json":{
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "ok": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

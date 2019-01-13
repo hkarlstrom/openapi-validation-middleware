@@ -82,4 +82,18 @@ class ResponsesTest extends BaseTest
         $this->assertSame('responseBody', $error['name']);
         $this->assertSame('error_required', $error['code']);
     }
+
+    public function testResponseMissedHeader()
+    {
+        $response = $this->response('get', '/missing/header', [
+            'options' => [
+                'validateResponseHeaders' => true,
+            ],
+        ]);
+        $this->assertSame(500, $response->getStatusCode());
+        $error = $this->json($response)['errors'][0];
+        $this->assertSame('responseHeader', $error['name']);
+        $this->assertSame('error_required', $error['code']);
+        $this->assertSame('X-Response-Id', $error['message']);
+    }
 }
