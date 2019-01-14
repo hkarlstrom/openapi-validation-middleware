@@ -59,7 +59,8 @@ $app->add(new HKarlstrom\Middleware\OpenApiValidation('/path/to/openapi.json'),[
 | stripResponse         | bool      | false   | Strip additional parameters from response to prevent response validation error |
 | validateError         | bool      | false   | Should the error response be validated |
 | validateRequest       | bool      | true    | Should the request be validated |
-| validateResponse      | bool      | true    | Should the response be validated |
+| validateResponse      | bool      | true    | Should the response's body be validated |
+| validateResponseHeaders      | bool      | false    | Should the response's headers be validated |
 
 
 #### beforeHandler

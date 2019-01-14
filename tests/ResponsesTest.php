@@ -11,6 +11,8 @@
 
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
+use Psr\Http\Message\ResponseInterface;
+
 class ResponsesTest extends BaseTest
 {
     public function testExampleResponse()
@@ -81,5 +83,37 @@ class ResponsesTest extends BaseTest
         $error = $this->json($response)['errors'][0];
         $this->assertSame('responseBody', $error['name']);
         $this->assertSame('error_required', $error['code']);
+    }
+
+    public function testResponseMissedHeader()
+    {
+        $response = $this->response('get', '/missing/header', [
+            'options' => [
+                'validateResponseHeaders' => true,
+            ],
+        ]);
+        $this->assertSame(500, $response->getStatusCode());
+        $error = $this->json($response)['errors'][0];
+        $this->assertSame('responseHeader', $error['name']);
+        $this->assertSame('error_required', $error['code']);
+        $this->assertSame('X-Response-Id', $error['message']);
+    }
+
+    public function testResponseInvalidHeader()
+    {
+        $response = $this->response('get', '/missing/header', [
+            'options' => [
+                'validateResponseHeaders' => true,
+            ],
+            'customHandler' => function ($request, ResponseInterface $response) {
+                return $response
+                    ->withHeader('X-Response-Id', 1000)
+                    ->withJson(['ok' => true]);
+            }
+        ]);
+        $this->assertSame(500, $response->getStatusCode());
+        $error = $this->json($response)['errors'][0];
+        $this->assertSame('X-Response-Id', $error['name']);
+        $this->assertSame('error_type', $error['code']);
     }
 }
