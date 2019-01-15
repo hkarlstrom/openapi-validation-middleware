@@ -34,18 +34,19 @@ class OpenApiValidation implements MiddlewareInterface
 
     private $openapi;
     private $options = [
-        'additionalParameters'   => false,
-        'beforeHandler'          => null,
-        'errorHandler'           => null,
-        'exampleResponse'        => false,
-        'missingFormatException' => true,
-        'pathNotFoundException'  => true,
-        'setDefaultParameters'   => false,
-        'stripResponse'          => false,
-        'validateError'          => false,
-        'validateRequest'        => true,
-        'validateResponse'       => true,
-        'validateResponseHeaders'=> false,
+        'additionalParameters'    => false,
+        'beforeHandler'           => null,
+        'errorHandler'            => null,
+        'exampleResponse'         => false,
+        'missingFormatException'  => true,
+        'pathNotFoundException'   => true,
+        'setDefaultParameters'    => false,
+        'stripResponse'           => false,
+        'stripResponseHeaders'    => false,
+        'validateError'           => false,
+        'validateRequest'         => true,
+        'validateResponse'        => true,
+        'validateResponseHeaders' => false,
     ];
     private $formatContainer;
 
@@ -131,55 +132,51 @@ class OpenApiValidation implements MiddlewareInterface
         return $response;
     }
 
-    public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : ?array {
-        $responseHeaders = $response->getHeaders();
-        $code             = $response->getStatusCode();
-        $responseObject   = $this->openapi->getOperationResponse($path, $method, $code);
-        $headersSpecifications = $responseObject->headers;
+    public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : array
+    {
+        $code                  = $response->getStatusCode();
+        $responseObject        = $this->openapi->getOperationResponse($path, $method, $code);
+        $headersSpecifications = $responseObject->getHeaders();
+        $responseHeaders       = $response->getHeaders();
 
-        // 0. No specification for headers means any header allowed, skip the check
-        if (null === $headersSpecifications) { // Not in file
+        // https://swagger.io/specification/#responseObject
+        // - If a response header is defined with the name "Content-Type", it SHALL be ignored.
+        $normalizedHeaderNamesInSpecification = [];
+        foreach ($headersSpecifications as $headerName => $header) {
+            $normalizedHeaderNamesInSpecification[] = mb_strtolower($headerName);
+        }
+
+        // If stripResponseHeaders is true, remove additional headers
+        if ($this->options['stripResponseHeaders']) {
+            foreach ($responseHeaders as $headerName => $headerValue) {
+                $normalizedHeaderName = mb_strtolower($headerName);
+                if ('content-type' != $normalizedHeaderName && !in_array($normalizedHeaderName, $normalizedHeaderNamesInSpecification)) {
+                    $response = $response->withoutHeader($headerName);
+                }
+            }
+        }
+
+        // No specification for headers means any header allowed, skip the check
+        if (empty($headersSpecifications)) {
             return [];
         }
 
-        $errors = [];
-
-        // 1. Find required headers
-        $requiredHeadersSpecifications = array_filter($headersSpecifications, function(array $headerSpecification){
-            return array_key_exists('required', $headerSpecification) && $headerSpecification['required'];
-        });
-
-        // 2. Find missed required headers
-        $missedHeaderNames = array_diff(
-            array_keys($requiredHeadersSpecifications),
-            array_keys($responseHeaders)
-        );
-        if($missedHeaderNames) {
-            foreach ($missedHeaderNames as $name) {
-                $errors[] = [
-                    'name'    => 'responseHeader',
-                    'code'    => 'error_required',
-                    'message' => $name
-                ];
+        $normalizedResponseHeaders = [];
+        foreach ($responseHeaders as $headerName => $values) {
+            $normalizedHeaderName = mb_strtolower($headerName);
+            // TODO Fix support if $values has many elements
+            if ('content-type' != $normalizedHeaderName) {
+                $normalizedResponseHeaders[$normalizedHeaderName] = $values[0];
             }
         }
-        if($errors) {
-            return $errors;
+        $properties = [];
+        foreach ($headersSpecifications as $headerName => $header) {
+            $properties[] = Property::fromHeader($headerName, $header, $normalizedResponseHeaders[mb_strtolower($headerName)] ?? null);
         }
-
-        // 3. Check header against schemas
-        foreach ($headersSpecifications as $headerName => $specification) {
-            $headerErrors = $this->validateObject($specification['schema'], $responseHeaders[$headerName]);
-            foreach ($headerErrors as &$error) {
-                $error['name'] = $headerName;
-            }
-            $errors = array_merge($errors, $headerErrors);
-        }
-
-        return $errors;
+        return $this->validateProperties($properties, 'header');
     }
 
-    public function validateResponseBody(ResponseInterface &$response, string $path, string $method) : ?array
+    public function validateResponseBody(ResponseInterface &$response, string $path, string $method) : array
     {
         $responseBodyData = json_decode($response->getBody()->__toString(), true);
         $code             = $response->getStatusCode();
@@ -320,7 +317,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $value;
     }
 
-    private function validateProperties(array $properties) : ?array
+    private function validateProperties(array $properties, $in = null) : ?array
     {
         $errors = [];
         foreach ($properties as $property) {
@@ -333,10 +330,14 @@ class OpenApiValidation implements MiddlewareInterface
         foreach ($properties as $property) {
             if (null === $property->value) {
                 if ($property->required) {
-                    $errors[] = [
+                    $err = [
                         'name' => $property->name,
                         'code' => 'error_required',
                     ];
+                    if ($in) {
+                        $err['in'] = $in;
+                    }
+                    $errors[] = $err;
                 }
                 continue;
             }
@@ -346,7 +347,7 @@ class OpenApiValidation implements MiddlewareInterface
             }
             if (!$result->isValid()) {
                 foreach ($result->getErrors() as $error) {
-                    $errors = array_merge($errors, $this->parseErrors($error, $property->name));
+                    $errors = array_merge($errors, $this->parseErrors($error, $property->name, $in));
                 }
             }
         }
@@ -489,16 +490,20 @@ class OpenApiValidation implements MiddlewareInterface
         return $response->withBody((new StreamFactory())->createStream(json_encode($json)));
     }
 
-    private function parseErrors(ValidationError $error, $name = null) : array
+    private function parseErrors(ValidationError $error, $name = null, $in = null) : array
     {
         $errors = [];
         if ('additionalProperties' == $error->keyword()) {
             foreach ($error->subErrors() as $se) {
-                $errors[] = [
+                $err = [
                     'name'  => implode('.', $se->dataPointer()),
                     'code'  => 'error_additional',
                     'value' => $se->data(),
                 ];
+                if ($in) {
+                    $err['in'] = $in;
+                }
+                $errors[] = $err;
             }
         } else {
             $err = [
@@ -506,6 +511,9 @@ class OpenApiValidation implements MiddlewareInterface
                 'code'  => 'error_'.$error->keyword(),
                 'value' => $error->data(),
             ];
+            if ($in) {
+                $err['in'] = $in;
+            }
             foreach ($error->keywordArgs() as $attr => $value) {
                 $err[$attr] = $value;
             }

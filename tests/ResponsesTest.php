@@ -94,12 +94,12 @@ class ResponsesTest extends BaseTest
         ]);
         $this->assertSame(500, $response->getStatusCode());
         $error = $this->json($response)['errors'][0];
-        $this->assertSame('responseHeader', $error['name']);
+        $this->assertSame('X-Response-Id', $error['name']);
         $this->assertSame('error_required', $error['code']);
-        $this->assertSame('X-Response-Id', $error['message']);
+        $this->assertSame('header', $error['in']);
     }
 
-    public function testResponseInvalidHeader()
+    public function testResponseInvalidHeaderFormat()
     {
         $response = $this->response('get', '/missing/header', [
             'options' => [
@@ -107,13 +107,16 @@ class ResponsesTest extends BaseTest
             ],
             'customHandler' => function ($request, ResponseInterface $response) {
                 return $response
-                    ->withHeader('X-Response-Id', 1000)
+                    ->withHeader('X-Response-Id', 'foo')
                     ->withJson(['ok' => true]);
-            }
+            },
         ]);
         $this->assertSame(500, $response->getStatusCode());
         $error = $this->json($response)['errors'][0];
         $this->assertSame('X-Response-Id', $error['name']);
         $this->assertSame('error_type', $error['code']);
+        $this->assertSame('integer', $error['expected']);
+        $this->assertSame('string', $error['used']);
+        $this->assertSame('header', $error['in']);
     }
 }

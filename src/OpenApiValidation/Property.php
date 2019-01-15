@@ -11,6 +11,7 @@
 
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
+use HKarlstrom\OpenApiReader\Objects\Header;
 use HKarlstrom\OpenApiReader\Objects\Parameter;
 
 class Property
@@ -44,6 +45,16 @@ class Property
             $parameter->name,
             $parameter->required ?? false,
             $parameter->schema,
+            $value
+        );
+    }
+
+    public static function fromHeader(string $name, Header $header, $value)
+    {
+        return new self(
+            $name,
+            $header->required ?? false,
+            $header->schema,
             $value
         );
     }

@@ -15,7 +15,14 @@
             "xResponseId": {
                 "required":true,
                 "schema": {
-                    "type": "string"
+                    "type": "integer"
+                },
+                "description": "Unique response ID"
+            },
+            "xResponseIdNotRequired": {
+                "required":false,
+                "schema": {
+                    "type": "integer"
                 },
                 "description": "Unique response ID"
             }
@@ -284,9 +291,13 @@
                 "operationId":"testMissingHeader",
                 "responses": {
                     "200": {
+                        "description":"Ok response",
                         "headers": {
                             "X-Response-Id": {
                                 "$ref": "#/components/headers/xResponseId"
+                            },
+                            "X-Response-Id-Not-Required": {
+                                "$ref": "#/components/headers/xResponseIdNotRequired"
                             }
                         },
                         "content":{
