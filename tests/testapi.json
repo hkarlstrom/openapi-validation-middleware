@@ -480,6 +480,14 @@
                             "type": "string",
                             "format":"customFormat"
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "date",
+                        "schema": {
+                            "type": "string",
+                            "format":"date"
+                        }
                     }
                 ],
                 "responses": {

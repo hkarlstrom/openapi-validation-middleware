@@ -87,6 +87,32 @@ class ParametersTest extends BaseTest
         $this->assertSame(200, $response->getStatusCode());
     }
 
+    public function testDate()
+    {
+        $response = $this->response('get', '/formats', [
+            'formats' => [
+                ['string', 'customFormat', new CustomFormat()],
+            ],
+            'query' => [
+                'date' => '2014-12-23',
+            ],
+        ]);
+        $json = $this->json($response);
+        $this->assertTrue($json['ok']);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $response = $this->response('get', '/formats', [
+            'formats' => [
+                ['string', 'customFormat', new CustomFormat()],
+            ],
+            'query' => [
+                'date' => '2014-02-31',
+            ],
+        ]);
+        $json = $this->json($response);
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
     public function testSetDefault()
     {
         $args = [
@@ -123,11 +149,10 @@ class ParametersTest extends BaseTest
     {
         $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'list' => 'item1,item3']]);
         $json     = $this->json($response);
-        $this->assertSame('item3',$json['errors'][0]['value']);
+        $this->assertSame('item3', $json['errors'][0]['value']);
 
         $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'listPipe' => 'item1|item2']]);
         $json     = $this->json($response);
         $this->assertTrue($json['ok']);
-
     }
 }

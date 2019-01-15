@@ -67,6 +67,7 @@ class OpenApiValidation implements MiddlewareInterface
         $this->formatContainer = new FormatContainer();
         // Password validator only checks that it's a string, as format=password only is a hint to the UI
         $this->formatContainer->add('string', 'password', new OpenApiValidation\Formats\PasswordValidator());
+        $this->formatContainer->add('string', 'date', new OpenApiValidation\Formats\DateValidator());
     }
 
     public function addFormat(string $type, string $name, \Opis\JsonSchema\IFormat $format)
