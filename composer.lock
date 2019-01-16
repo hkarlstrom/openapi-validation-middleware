@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ae7dbc85b2de91b6372dadf971bb6a7",
+    "content-hash": "642c9a49f3af17460050d239fbcb346a",
     "packages": [
         {
             "name": "hkarlstrom/openapi-reader",
-            "version": "0.2.1",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hkarlstrom/openapi-reader.git",
-                "reference": "ca323278264dd372a55b362b2a701e45c2760e2c"
+                "reference": "396b4d3dd971e119875fc9530b2594838bbbe648"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/ca323278264dd372a55b362b2a701e45c2760e2c",
-                "reference": "ca323278264dd372a55b362b2a701e45c2760e2c",
+                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/396b4d3dd971e119875fc9530b2594838bbbe648",
+                "reference": "396b4d3dd971e119875fc9530b2594838bbbe648",
                 "shasum": ""
             },
             "require": {
@@ -43,20 +43,20 @@
                 }
             ],
             "description": "Library for parsing OpenAPI json documentation files.",
-            "time": "2019-01-15T11:04:45+00:00"
+            "time": "2019-01-16T18:01:54+00:00"
         },
         {
             "name": "opis/json-schema",
-            "version": "1.0.12",
+            "version": "1.0.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opis/json-schema.git",
-                "reference": "cc89e90f6d8d1488f2057d245076f8857299d353"
+                "reference": "d79f9f4ab1dbbb88799b49cb4194d4229c4f6ef6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opis/json-schema/zipball/cc89e90f6d8d1488f2057d245076f8857299d353",
-                "reference": "cc89e90f6d8d1488f2057d245076f8857299d353",
+                "url": "https://api.github.com/repos/opis/json-schema/zipball/d79f9f4ab1dbbb88799b49cb4194d4229c4f6ef6",
+                "reference": "d79f9f4ab1dbbb88799b49cb4194d4229c4f6ef6",
                 "shasum": ""
             },
             "require": {
@@ -105,7 +105,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2019-01-09T12:25:41+00:00"
+            "time": "2019-01-16T15:54:41+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -2039,16 +2039,16 @@
         },
         {
             "name": "slim/slim",
-            "version": "3.11.0",
+            "version": "3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Slim.git",
-                "reference": "d378e70431e78ee92ee32ddde61ecc72edf5dc0a"
+                "reference": "f4947cc900b6e51cbfda58b9f1247bca2f76f9f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Slim/zipball/d378e70431e78ee92ee32ddde61ecc72edf5dc0a",
-                "reference": "d378e70431e78ee92ee32ddde61ecc72edf5dc0a",
+                "url": "https://api.github.com/repos/slimphp/Slim/zipball/f4947cc900b6e51cbfda58b9f1247bca2f76f9f0",
+                "reference": "f4947cc900b6e51cbfda58b9f1247bca2f76f9f0",
                 "shasum": ""
             },
             "require": {
@@ -2106,7 +2106,7 @@
                 "micro",
                 "router"
             ],
-            "time": "2018-09-16T10:54:21+00:00"
+            "time": "2019-01-15T13:21:25+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
