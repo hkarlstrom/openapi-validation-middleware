@@ -12,6 +12,11 @@
 namespace HKarlstrom\Middleware;
 
 use Exception;
+use HKarlstrom\Middleware\OpenApiValidation\Exception\BeforeHandlerException;
+use HKarlstrom\Middleware\OpenApiValidation\Exception\FileNotFoundException;
+use HKarlstrom\Middleware\OpenApiValidation\Exception\InvalidOptionException;
+use HKarlstrom\Middleware\OpenApiValidation\Exception\MissingFormatException;
+use HKarlstrom\Middleware\OpenApiValidation\Exception\PathNotFoundException;
 use HKarlstrom\Middleware\OpenApiValidation\Helpers\Json as JsonHelper;
 use HKarlstrom\Middleware\OpenApiValidation\Helpers\Schema as SchemaHelper;
 use HKarlstrom\Middleware\OpenApiValidation\Property;
@@ -50,18 +55,18 @@ class OpenApiValidation implements MiddlewareInterface
     ];
     private $formatContainer;
 
-    public function __construct(string $file, array $options = [])
+    public function __construct(string $filename, array $options = [])
     {
-        if (!file_exists($file)) {
-            throw new Exception(sprintf("The file '%s' does not exist", $file));
+        if (!file_exists($filename)) {
+            throw new FileNotFoundException($filename);
         }
-        $this->openapi = new OpenApiReader($file);
+        $this->openapi = new OpenApiReader($filename);
         $allOptions    = array_keys($this->options);
         foreach ($options as $option => $value) {
             if (in_array($option, $allOptions)) {
                 $this->options[$option] = $value;
             } else {
-                throw new Exception(sprintf('Invalid option: %s', $option));
+                throw new InvalidOptionException($option);
             }
         }
         $this->formatContainer = new FormatContainer();
@@ -85,12 +90,11 @@ class OpenApiValidation implements MiddlewareInterface
         }
 
         if (null === $path && $this->options['pathNotFoundException']) {
-            throw new Exception(sprintf('%s %s not defined in OpenAPI document.', mb_strtoupper($method), $request->getRequestTarget()));
+            throw new PathNotFoundException($method, $request->getRequestTarget());
         }
         if (null === $path) {
             return $handler->handle($request);
         }
-
         if ($this->options['validateRequest']
             && $errors = $this->validateRequest($request, $path, $method, $pathParameters)) {
             if (is_callable($this->options['beforeHandler'])) {
@@ -98,7 +102,7 @@ class OpenApiValidation implements MiddlewareInterface
                 if ($beforeRequest instanceof ServerRequestInterface) {
                     $response = $handler->handle($beforeRequest);
                 } else {
-                    throw new Exception("Invalid return value from 'beforeHandler' handler");
+                    throw new BeforeHandlerException(gettype($beforeRequest));
                 }
             } else {
                 $response = $this->error(400, 'Request validation failed', $errors);
@@ -218,7 +222,7 @@ class OpenApiValidation implements MiddlewareInterface
                 $this->formatContainer->add($type, $format, new OpenApiValidation\Formats\RespectValidator($format));
             } catch (Exception $e) {
                 if ($this->options['missingFormatException']) {
-                    throw new Exception(sprintf('Missing validator for type=%s, format=%s', $type, $format));
+                    throw new MissingFormatException($type, $format);
                 }
             }
         }

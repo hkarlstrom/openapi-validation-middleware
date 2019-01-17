@@ -12,31 +12,62 @@
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
 use HKarlstrom\Middleware\OpenApiValidation;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ExceptionsTest extends BaseTest
 {
     public function testFileNotExist()
     {
-        $this->expectException('Exception');
-        $mw = new OpenApiValidation('not_a_file.json');
+        try {
+            $mw = new OpenApiValidation('not_a_file.json');
+        } catch (\HKarlstrom\Middleware\OpenApiValidation\Exception\FileNotFoundException $e) {
+            $this->assertSame('not_a_file.json', $e->filename());
+        }
     }
 
     public function testInvalidOption()
     {
-        $this->expectException('Exception');
-        $mw = new OpenApiValidation($this->openapiFile, ['invalidOption' => true]);
+        try {
+            $mw = new OpenApiValidation($this->openapiFile, ['invalidOption' => true]);
+        } catch (\HKarlstrom\Middleware\OpenApiValidation\Exception\InvalidOptionException $e) {
+            $this->assertSame('invalidOption', $e->option());
+        }
     }
 
     public function testPathNotFound()
     {
-        $this->expectException('Exception');
-        $response = $this->response('get', '/not/defined');
+        try {
+            $response = $this->response('get', '/not/defined');
+        } catch (\HKarlstrom\Middleware\OpenApiValidation\Exception\PathNotFoundException $e) {
+            $this->assertSame('GET', $e->method());
+            $this->assertSame('/not/defined', $e->path());
+        }
+    }
+
+    public function testInvalidBeforeHandlerReturnValue()
+    {
+        try {
+            $response = $this->response('get', '/parameters', [
+                'options' => [
+                    'beforeHandler' => function (ServerRequestInterface $request, array $errors) {
+                        return 'no';
+                    },
+                ],
+            ]);
+        } catch (\HKarlstrom\Middleware\OpenApiValidation\Exception\BeforeHandlerException $e) {
+            $this->assertSame('string', $e->type());
+        }
     }
 
     public function testFormatMissingException()
     {
         $this->expectException('Exception');
-        $response = $this->response('get', '/missing/format', ['query' => ['test' => 'foo']]);
+        try {
+            $response = $this->response('get', '/missing/format', ['query' => ['test' => 'foo']]);
+        } catch (\HKarlstrom\Middleware\OpenApiValidation\Exception\PathNotFoundException $e) {
+            $this->assertSame('string', $e->type());
+            $this->assertSame('uid', $e->format());
+        }
     }
 
     public function testPathNotFoundNoException()
