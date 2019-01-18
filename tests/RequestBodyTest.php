@@ -77,4 +77,25 @@ class RequestBodyTest extends BaseTest
         $this->assertTrue($json['ok']);
         $this->assertSame(200, $response->getStatusCode());
     }
+
+    public function testAllOfComposition()
+    {
+        $response = $this->response('put', '/all/of', [
+            'body' => [
+                'id'          => 'a',
+                'first_name'  => 'Jane',
+                'last_name'   => 'Doe',
+                'phone'       => '3333-11111111',
+                'nationality' => 'IE',
+            ],
+        ]);
+        $json = $this->json($response);
+        $this->assertSame('e_mail', $json['errors'][0]['name']);
+        $this->assertSame('error_required', $json['errors'][0]['code']);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('id', $json['errors'][1]['name']);
+        $this->assertSame('string', $json['errors'][1]['used']);
+        $this->assertSame('integer', $json['errors'][1]['expected']);
+        $this->assertSame('error_type', $json['errors'][1]['code']);
+    }
 }

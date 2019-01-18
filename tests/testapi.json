@@ -10,17 +10,17 @@
             "url": "https://apitest.com"
         }
     ],
-    "components":{
+    "components": {
         "headers": {
             "xResponseId": {
-                "required":true,
+                "required": true,
                 "schema": {
                     "type": "integer"
                 },
                 "description": "Unique response ID"
             },
             "xResponseIdNotRequired": {
-                "required":false,
+                "required": false,
                 "schema": {
                     "type": "integer"
                 },
@@ -28,10 +28,10 @@
             }
         },
         "responses": {
-            "OkResponse":{
-                "description":"Ok",
-                "content":{
-                    "application/json":{
+            "OkResponse": {
+                "description": "Ok",
+                "content": {
+                    "application/json": {
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -43,37 +43,37 @@
                     }
                 }
             },
-            "ErrorResponse":{
-                "description":"Error",
-                "content":{
-                    "application/json":{
+            "ErrorResponse": {
+                "description": "Error",
+                "content": {
+                    "application/json": {
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "message": {
                                     "type": "string"
                                 },
-                                "errors":{
-                                    "type":"array",
-                                    "items":{
-                                        "type":"object",
-                                        "properties":{
-                                            "code":{
-                                                "type":"string"
+                                "errors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "code": {
+                                                "type": "string"
                                             },
-                                            "name":{
-                                                "type":"string"
+                                            "name": {
+                                                "type": "string"
                                             },
-                                            "used":{
-                                                "type":"string"
+                                            "used": {
+                                                "type": "string"
                                             },
-                                            "format":{
-                                                "type":"string"
+                                            "format": {
+                                                "type": "string"
                                             },
-                                            "type":{
-                                                "type":"string"
+                                            "type": {
+                                                "type": "string"
                                             },
-                                            "expected":{
+                                            "expected": {
                                                 "anyOf": [
                                                     {
                                                         "type": "integer"
@@ -86,7 +86,7 @@
                                                     }
                                                 ]
                                             },
-                                            "value":{
+                                            "value": {
                                                 "anyOf": [
                                                     {
                                                         "type": "integer"
@@ -104,15 +104,64 @@
                     }
                 }
             }
+        },
+        "schemas": {
+            "NewStudent": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "minLength": 2
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "minLength": 2
+                    },
+                    "e_mail": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "nationality": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{2}$"
+                    }
+                },
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "e_mail",
+                    "nationality"
+                ]
+            },
+            "Student": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/NewStudent"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "id"
+                        ]
+                    }
+                ]
+            }
         }
     },
     "paths": {
         "/request/body": {
-            "post":{
-                "operationId":"testRequestBody",
-                "requestBody":{
-                    "content":{
-                        "application/json":{
+            "post": {
+                "operationId": "testRequestBody",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
                             "schema": {
                                 "type": "object",
                                 "properties": {
@@ -122,22 +171,24 @@
                                     "bar": {
                                         "type": "integer"
                                     },
-                                    "person":{
-                                        "type":"object",
-                                        "required":["name"],
-                                        "properties":{
-                                            "name":{
-                                                "type":"string"
+                                    "person": {
+                                        "type": "object",
+                                        "required": [
+                                            "name"
+                                        ],
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
                                             },
-                                            "email":{
-                                                "type":"string",
-                                                "format":"email"
+                                            "email": {
+                                                "type": "string",
+                                                "format": "email"
                                             }
                                         }
                                     },
-                                    "custom":{
-                                        "type":"string",
-                                        "format":"customFormat"
+                                    "custom": {
+                                        "type": "string",
+                                        "format": "customFormat"
                                     }
                                 }
                             }
@@ -146,20 +197,20 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
         },
         "/request/body/empty": {
-            "post":{
-                "operationId":"testRequestBody",
-                "requestBody":{
-                    "content":{
-                        "application/json":{
+            "post": {
+                "operationId": "testRequestBody",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
                             "schema": {
                                 "type": "object",
                                 "properties": {
@@ -176,10 +227,10 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
@@ -187,14 +238,17 @@
         "/parameters": {
             "get": {
                 "operationId": "testParameters",
-                "parameters":[
+                "parameters": [
                     {
                         "in": "query",
-                        "required":true,
+                        "required": true,
                         "name": "foo",
                         "schema": {
                             "type": "string",
-                            "enum":["aaa","bbb"]
+                            "enum": [
+                                "aaa",
+                                "bbb"
+                            ]
                         }
                     },
                     {
@@ -202,7 +256,7 @@
                         "name": "default",
                         "schema": {
                             "type": "integer",
-                            "default":50
+                            "default": 50
                         }
                     },
                     {
@@ -210,32 +264,38 @@
                         "name": "list",
                         "schema": {
                             "type": "array",
-                            "items":{
-                                "type":"string",
-                                "enum":["item1","item2"]
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "item1",
+                                    "item2"
+                                ]
                             }
                         },
-                        "explode":false
+                        "explode": false
                     },
                     {
                         "in": "query",
                         "name": "listPipe",
                         "schema": {
                             "type": "array",
-                            "items":{
-                                "type":"string",
-                                "enum":["item1","item2"]
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "item1",
+                                    "item2"
+                                ]
                             }
                         },
-                        "style":"pipeDelimited"
+                        "style": "pipeDelimited"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
@@ -243,55 +303,58 @@
         "/path/{foo}": {
             "get": {
                 "operationId": "testPath",
-                "parameters":[
+                "parameters": [
                     {
                         "in": "path",
                         "name": "foo",
                         "schema": {
                             "type": "string",
-                            "enum":["aaa","bbb"]
+                            "enum": [
+                                "aaa",
+                                "bbb"
+                            ]
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
         },
         "/missing/format": {
             "get": {
-                "operationId":"testMissingFormat",
-                "parameters":[
+                "operationId": "testMissingFormat",
+                "parameters": [
                     {
-                        "in":"query",
-                        "name":"test",
+                        "in": "query",
+                        "name": "test",
                         "schema": {
                             "type": "string",
-                            "format":"uid"
+                            "format": "uid"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
         },
         "/missing/header": {
             "get": {
-                "operationId":"testMissingHeader",
+                "operationId": "testMissingHeader",
                 "responses": {
                     "200": {
-                        "description":"Ok response",
+                        "description": "Ok response",
                         "headers": {
                             "X-Response-Id": {
                                 "$ref": "#/components/headers/xResponseId"
@@ -300,8 +363,8 @@
                                 "$ref": "#/components/headers/xResponseIdNotRequired"
                             }
                         },
-                        "content":{
-                            "application/json":{
+                        "content": {
+                            "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
@@ -318,12 +381,12 @@
         },
         "/response/example": {
             "get": {
-                "operationId":"testResponseExample",
+                "operationId": "testResponseExample",
                 "responses": {
                     "200": {
-                        "description":"Ok",
-                        "content":{
-                            "application/json":{
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
@@ -335,26 +398,26 @@
                                         }
                                     }
                                 },
-                                "example":{
-                                    "foo":"test",
-                                    "bar":100,
-                                    "extra":"-"
+                                "example": {
+                                    "foo": "test",
+                                    "bar": 100,
+                                    "extra": "-"
                                 }
                             }
                         }
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             },
             "post": {
-                "operationId":"testResponseExamplePost",
+                "operationId": "testResponseExamplePost",
                 "responses": {
                     "201": {
-                        "description":"Ok",
-                        "content":{
-                            "application/json":{
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
@@ -366,31 +429,31 @@
                                         }
                                     }
                                 },
-                                "example":{
-                                    "foo":"test",
-                                    "bar":100
+                                "example": {
+                                    "foo": "test",
+                                    "bar": 100
                                 }
                             }
                         }
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
         },
         "/response/example/list": {
             "get": {
-                "operationId":"testResponseExampleList",
+                "operationId": "testResponseExampleList",
                 "responses": {
                     "200": {
-                        "description":"Ok",
-                        "content":{
-                            "application/json":{
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
                                 "schema": {
                                     "type": "array",
-                                    "items":{
-                                        "type":"object",
+                                    "items": {
+                                        "type": "object",
                                         "properties": {
                                             "foo": {
                                                 "type": "string"
@@ -401,24 +464,26 @@
                                         }
                                     }
                                 },
-                                "example":[{
-                                    "foo":"test",
-                                    "bar":100,
-                                    "extra":"-"
-                                }]
+                                "example": [
+                                    {
+                                        "foo": "test",
+                                        "bar": 100,
+                                        "extra": "-"
+                                    }
+                                ]
                             }
                         }
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
         },
         "/formats": {
             "get": {
-                "operationId":"testDifferentFormats",
-                "parameters":[
+                "operationId": "testDifferentFormats",
+                "parameters": [
                     {
                         "in": "query",
                         "name": "string",
@@ -438,7 +503,7 @@
                         "name": "email",
                         "schema": {
                             "type": "string",
-                            "format":"email"
+                            "format": "email"
                         }
                     },
                     {
@@ -446,7 +511,7 @@
                         "name": "phone",
                         "schema": {
                             "type": "string",
-                            "pattern":"^\\+[1-9]\\d{1,14}$"
+                            "pattern": "^\\+[1-9]\\d{1,14}$"
                         }
                     },
                     {
@@ -454,7 +519,7 @@
                         "name": "country-code",
                         "schema": {
                             "type": "string",
-                            "format":"country-code"
+                            "format": "country-code"
                         }
                     },
                     {
@@ -462,7 +527,7 @@
                         "name": "ends-with",
                         "schema": {
                             "type": "string",
-                            "format":"ends-with('@gmail.com')"
+                            "format": "ends-with('@gmail.com')"
                         }
                     },
                     {
@@ -470,7 +535,7 @@
                         "name": "between",
                         "schema": {
                             "type": "integer",
-                            "format":"between(10, 20)"
+                            "format": "between(10, 20)"
                         }
                     },
                     {
@@ -478,7 +543,7 @@
                         "name": "customFormat",
                         "schema": {
                             "type": "string",
-                            "format":"customFormat"
+                            "format": "customFormat"
                         }
                     },
                     {
@@ -486,40 +551,40 @@
                         "name": "date",
                         "schema": {
                             "type": "string",
-                            "format":"date"
+                            "format": "date"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
         },
-        "/upload":{
-            "post":{
-                "operationId":"testFileUpload",
-                "requestBody":{
-                    "content":{
-                        "multipart/form-data":{
-                            "schema":{
+        "/upload": {
+            "post": {
+                "operationId": "testFileUpload",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
                                 "type": "object",
-                                "properties":{
-                                    "id":{
-                                        "type":"integer"
+                                "properties": {
+                                    "id": {
+                                        "type": "integer"
                                     },
-                                    "file":{
+                                    "file": {
                                         "type": "string",
                                         "format": "binary"
                                     }
                                 }
                             },
-                            "encoding":{
-                                "file":{
+                            "encoding": {
+                                "file": {
                                     "contentType": "text/plain, image/jpeg"
                                 }
                             }
@@ -528,18 +593,18 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
         },
-        "/path/{foo}/path/{bar}":{
-            "get":{
-                "operationId":"pathParamTest",
-                "parameters":[
+        "/path/{foo}/path/{bar}": {
+            "get": {
+                "operationId": "pathParamTest",
+                "parameters": [
                     {
                         "in": "path",
                         "name": "foo",
@@ -557,10 +622,33 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref":"#/components/responses/OkResponse"
+                        "$ref": "#/components/responses/OkResponse"
                     },
                     "400": {
-                        "$ref":"#/components/responses/ErrorResponse"
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/all/of": {
+            "put": {
+                "operationId": "updateStudentById",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Student"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }
