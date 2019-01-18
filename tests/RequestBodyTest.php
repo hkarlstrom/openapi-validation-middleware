@@ -66,9 +66,8 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('error_type', $errors[1]['code']);
         $this->assertSame('error_required', $errors[2]['code']);
         $this->assertSame('error_format', $errors[3]['code']);
-        $this->assertSame('error_additional', $errors[4]['code']);
-        $this->assertSame('error_format', $errors[5]['code']);
-        $this->assertSame('customFormat', $errors[5]['format']);
+        $this->assertSame('error_format', $errors[4]['code']);
+        $this->assertSame('customFormat', $errors[4]['format']);
     }
 
     public function testEmptyRequestBody()

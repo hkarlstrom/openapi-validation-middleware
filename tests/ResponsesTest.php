@@ -23,10 +23,7 @@ class ResponsesTest extends BaseTest
                 'exampleResponse' => true,
             ],
         ]);
-        $this->assertSame(500, $response->getStatusCode());
-        $error = $this->json($response)['errors'][0];
-        $this->assertSame('extra', $error['name']);
-        $this->assertSame('error_additional', $error['code']);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     public function testExampleResponsePost()

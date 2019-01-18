@@ -360,7 +360,6 @@ class OpenApiValidation implements MiddlewareInterface
 
     private function validateObject(array $schema, array $value) : array
     {
-        $schema = SchemaHelper::addRecursive($schema, 'additionalProperties', false);
         $errors = [];
         foreach (SchemaHelper::getFormats($schema) as $f) {
             $this->checkFormat($f['type'], $f['format']);
