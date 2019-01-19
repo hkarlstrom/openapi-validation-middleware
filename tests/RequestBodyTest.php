@@ -68,6 +68,11 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('error_format', $errors[3]['code']);
         $this->assertSame('error_format', $errors[4]['code']);
         $this->assertSame('customFormat', $errors[4]['format']);
+        $this->assertSame('body', $errors[0]['in']);
+        $this->assertSame('body', $errors[1]['in']);
+        $this->assertSame('body', $errors[2]['in']);
+        $this->assertSame('body', $errors[3]['in']);
+        $this->assertSame('body', $errors[4]['in']);
     }
 
     public function testEmptyRequestBody()
@@ -97,5 +102,7 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('string', $json['errors'][1]['used']);
         $this->assertSame('integer', $json['errors'][1]['expected']);
         $this->assertSame('error_type', $json['errors'][1]['code']);
+        $this->assertSame('body', $json['errors'][0]['in']);
+        $this->assertSame('body', $json['errors'][1]['in']);
     }
 }

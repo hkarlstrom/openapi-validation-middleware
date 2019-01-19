@@ -17,13 +17,15 @@ use HKarlstrom\OpenApiReader\Objects\Parameter;
 class Property
 {
     public $name;
+    public $in;
     public $required;
     public $schema;
     public $value;
 
-    public function __construct(string $name, bool $required, $schema, $value = null)
+    public function __construct(string $name, string $in, bool $required, $schema, $value = null)
     {
         $this->name     = $name;
+        $this->in       = $in;
         $this->required = $required;
         $this->schema   = json_decode(json_encode($schema));
         $this->value    = $value ?? null;
@@ -43,6 +45,7 @@ class Property
     {
         return new self(
             $parameter->name,
+            $parameter->in,
             $parameter->required ?? false,
             $parameter->schema,
             $value
@@ -53,6 +56,7 @@ class Property
     {
         return new self(
             $name,
+            'header',
             $header->required ?? false,
             $header->schema,
             $value

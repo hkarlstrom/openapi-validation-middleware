@@ -44,6 +44,7 @@ class ParametersTest extends BaseTest
         $this->assertSame(400, $response->getStatusCode());
         $error = $json['errors'][0];
         $this->assertSame('foo', $error['name']);
+        $this->assertSame('query', $error['in']);
         $this->assertSame('error_enum', $error['code']);
         $this->assertSame(['aaa', 'bbb'], $error['expected']);
     }
@@ -143,6 +144,13 @@ class ParametersTest extends BaseTest
         $response = $this->response('get', '/path/100/path/200');
         $json     = $this->json($response);
         $this->assertSame(200, $response->getStatusCode());
+
+        $response = $this->response('get', '/path/100/path/string');
+        $json     = $this->json($response);
+        $this->assertSame(400, $response->getStatusCode());
+        $json  = $this->json($response);
+        $error = $json['errors'][0];
+        $this->assertSame('path', $error['in']);
     }
 
     public function testStyle()

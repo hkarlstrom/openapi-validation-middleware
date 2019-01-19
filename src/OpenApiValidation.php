@@ -177,7 +177,7 @@ class OpenApiValidation implements MiddlewareInterface
         foreach ($headersSpecifications as $headerName => $header) {
             $properties[] = Property::fromHeader($headerName, $header, $normalizedResponseHeaders[mb_strtolower($headerName)] ?? null);
         }
-        return $this->validateProperties($properties, 'header');
+        return $this->validateProperties($properties);
     }
 
     public function validateResponseBody(ResponseInterface &$response, string $path, string $method) : array
@@ -321,7 +321,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $value;
     }
 
-    private function validateProperties(array $properties, $in = null) : ?array
+    private function validateProperties(array $properties) : ?array
     {
         $errors = [];
         foreach ($properties as $property) {
@@ -337,10 +337,8 @@ class OpenApiValidation implements MiddlewareInterface
                     $err = [
                         'name' => $property->name,
                         'code' => 'error_required',
+                        'in' => $property->in
                     ];
-                    if ($in) {
-                        $err['in'] = $in;
-                    }
                     $errors[] = $err;
                 }
                 continue;
@@ -351,7 +349,7 @@ class OpenApiValidation implements MiddlewareInterface
             }
             if (!$result->isValid()) {
                 foreach ($result->getErrors() as $error) {
-                    $errors = array_merge($errors, $this->parseErrors($error, $property->name, $in));
+                    $errors = array_merge($errors, $this->parseErrors($error, $property->name, $property->in));
                 }
             }
         }
@@ -384,7 +382,7 @@ class OpenApiValidation implements MiddlewareInterface
             }
             if (!$result->isValid()) {
                 foreach ($result->getErrors() as $error) {
-                    $errors = array_merge($errors, $this->parseErrors($error));
+                    $errors = array_merge($errors, $this->parseErrors($error, null, 'body'));
                 }
             }
         }
@@ -415,6 +413,7 @@ class OpenApiValidation implements MiddlewareInterface
             } else {
                 $properties[] = new Property(
                     $name,
+                    'form-data',
                     in_array($name, $schema['required'] ?? []),
                     $property,
                     $formData[$name]
@@ -507,10 +506,8 @@ class OpenApiValidation implements MiddlewareInterface
                     'name'  => implode('.', $se->dataPointer()),
                     'code'  => 'error_additional',
                     'value' => $se->data(),
+                    'in'    => $in
                 ];
-                if ($in) {
-                    $err['in'] = $in;
-                }
                 $errors[] = $err;
             }
         } else {
