@@ -337,7 +337,7 @@ class OpenApiValidation implements MiddlewareInterface
                     $err = [
                         'name' => $property->name,
                         'code' => 'error_required',
-                        'in' => $property->in
+                        'in'   => $property->in,
                     ];
                     $errors[] = $err;
                 }
@@ -364,26 +364,22 @@ class OpenApiValidation implements MiddlewareInterface
         }
         $validator = new Validator();
         $validator->setFormats($this->formatContainer);
-
-        // TODO support for anyOf, oneOf, not, discriminator property
-        $schemas = isset($schema['allOf']) ? $schema['allOf'] : [$schema];
-        foreach ($schemas as $schema) {
-            try {
-                $value  = json_decode(json_encode($value));
-                $schema = json_decode(json_encode($schema));
-                $result = $validator->dataValidation($value, $schema, 99);
-            } catch (Exception $e) {
-                return [[
-                    'name'    => 'server',
-                    'code'    => 'error_server',
-                    'message' => $e->getMessage(),
-                ]];
-                return [$e->getMessage()];
-            }
-            if (!$result->isValid()) {
-                foreach ($result->getErrors() as $error) {
-                    $errors = array_merge($errors, $this->parseErrors($error, null, 'body'));
-                }
+        $schema = SchemaHelper::mergeAllOf($schema);
+        try {
+            $value  = json_decode(json_encode($value));
+            $schema = json_decode(json_encode($schema));
+            $result = $validator->dataValidation($value, $schema, 99);
+        } catch (Exception $e) {
+            return [[
+                'name'    => 'server',
+                'code'    => 'error_server',
+                'message' => $e->getMessage(),
+            ]];
+            return [$e->getMessage()];
+        }
+        if (!$result->isValid()) {
+            foreach ($result->getErrors() as $error) {
+                $errors = array_merge($errors, $this->parseErrors($error, null, 'body'));
             }
         }
         return $errors;
@@ -502,7 +498,7 @@ class OpenApiValidation implements MiddlewareInterface
         $errors = [];
         if ($error->subErrorsCount()) {
             foreach ($error->subErrors() as $subError) {
-                $errors = array_merge($errors,$this->parseErrors($subError, $name, $in));
+                $errors = array_merge($errors, $this->parseErrors($subError, $name, $in));
             }
         } else {
             $err = [

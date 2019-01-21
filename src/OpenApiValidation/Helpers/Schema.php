@@ -26,6 +26,26 @@ class Schema
         return $schema;
     }
 
+    public static function mergeAllOf(array $schema) : array
+    {
+        if (isset($schema['allOf']) && is_array($schema['allOf'])) {
+            $allOf = $schema['allOf'];
+            unset($schema['allOf']);
+            $merged = array_shift($allOf);
+            while (!empty($allOf)) {
+                $next   = array_shift($allOf);
+                $merged = \Ckr\Util\ArrayMerger::doMerge($next, $merged);
+            }
+            $schema = \Ckr\Util\ArrayMerger::doMerge($schema, $merged);
+        }
+        foreach ($schema as $attr => $val) {
+            if (is_array($val)) {
+                $schema[$attr] = self::mergeAllOf($val);
+            }
+        }
+        return $schema;
+    }
+
     public static function getFormats(array $schema) : array
     {
         $excluded = [

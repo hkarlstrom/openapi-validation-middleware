@@ -638,7 +638,12 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Student"
+                                "type":"object",
+                                "properties":{
+                                    "data":{
+                                        "$ref": "#/components/schemas/Student"
+                                    }
+                                }
                             }
                         }
                     }

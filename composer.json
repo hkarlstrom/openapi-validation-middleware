@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^7.1",
+        "ckr/arraymerger": "^2.0",
         "hkarlstrom/openapi-reader": "^0.2.1",
         "opis/json-schema": "^1.0",
         "psr/http-message": "^1.0",
