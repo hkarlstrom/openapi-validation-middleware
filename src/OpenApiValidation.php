@@ -500,15 +500,9 @@ class OpenApiValidation implements MiddlewareInterface
     private function parseErrors(ValidationError $error, $name = null, $in = null) : array
     {
         $errors = [];
-        if ('additionalProperties' == $error->keyword()) {
-            foreach ($error->subErrors() as $se) {
-                $err = [
-                    'name'  => implode('.', $se->dataPointer()),
-                    'code'  => 'error_additional',
-                    'value' => $se->data(),
-                    'in'    => $in
-                ];
-                $errors[] = $err;
+        if ($error->subErrorsCount()) {
+            foreach ($error->subErrors() as $subError) {
+                $errors = array_merge($errors,$this->parseErrors($subError, $name, $in));
             }
         } else {
             $err = [
