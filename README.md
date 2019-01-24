@@ -2,7 +2,7 @@
 
 PSR-7 and PSR-15 OpenAPI Validation Middleware
 
-The middleware parses an OpenAPI definition document (openapi.json) and validates:
+The middleware parses an OpenAPI definition document (openapi.json or openapi.yaml) and validates:
 * Request parameters (path, query)
 * Request body
 * Response body
@@ -19,7 +19,7 @@ It's recommended that you use [Composer](https://getcomposer.org/download) to in
 composer require hkarlstrom/openapi-validation-middleware
 ```
 
-Use [Swagger/OpenAPI CLI](https://www.npmjs.com/package/swagger-cli) to validate openapi.json file, as the middleware assumes it to be valid.
+Use [Swagger/OpenAPI CLI](https://www.npmjs.com/package/swagger-cli) to validate openapi.json/openapi.yaml file, as the middleware assumes it to be valid.
 
 
 ## Usage
@@ -52,9 +52,9 @@ $app->add(new HKarlstrom\Middleware\OpenApiValidation('/path/to/openapi.json'),[
 | additionalParameters    | bool      | false   | Allow additional parameters in query |
 | beforeHandler           | callable  | null    | Instructions [below](README.md#beforehandler) |
 | errorHandler            | callable  | null    | Instructions [below](README.md#errorhandler) |
-| exampleResponse         | bool      | false   | Return example response from openapi.json if route implementation is empty |
+| exampleResponse         | bool      | false   | Return example response from openapi.json/openapi.yaml if route implementation is empty |
 | missingFormatException  | bool      | true    | Throw an exception if a format validator is missing |
-| pathNotFoundException   | bool      | true    | Throw an exception if the path is not found in openapi.json |
+| pathNotFoundException   | bool      | true    | Throw an exception if the path is not found in openapi.json/openapi.yaml |
 | setDefaultParameters    | bool      | false   | Set the default parameter values for missing parameters and alter the request object |
 | stripResponse           | bool      | false   | Strip additional attributes from response to prevent response validation error |
 | stripResponseHeaders    | bool      | false   | Strip additional headers from response to prevent response validation error |
@@ -108,7 +108,7 @@ $app->add($mw);
 
 #### Respect Validation
 
-You can use [all the validators](http://respect.github.io/Validation/docs/validators.html) just by setting the `format` property in your openapi.json file.
+You can use [all the validators](http://respect.github.io/Validation/docs/validators.html) just by setting the `format` property in your openapi.json/openapi.yaml file.
 ```json
 "schema":{
     "type" : "string",
