@@ -260,14 +260,7 @@ class OpenApiValidation implements MiddlewareInterface
                 switch ($mediaType) {
                     case 'application/json':
                         if (!empty($requestBodyData)) {
-                            $objectErrors = $this->validateObject($requestMediaType->schema, $requestBodyData);
-                            foreach ($objectErrors as $error) {
-                                if (!('error_type' == $error['code']
-                                    && 'null' == $error['used']
-                                    && SchemaHelper::isNullable($requestMediaType->schema, explode('.', $error['name'])))) {
-                                    $errors[] = $error;
-                                }
-                            }
+                            $errors = $this->validateObject($requestMediaType->schema, $requestBodyData);
                         }
                         break;
                     case 'multipart/form-data':
@@ -364,7 +357,7 @@ class OpenApiValidation implements MiddlewareInterface
         }
         $validator = new Validator();
         $validator->setFormats($this->formatContainer);
-        $schema = SchemaHelper::mergeAllOf($schema);
+        $schema = SchemaHelper::openApiToJsonSchema($schema);
         try {
             $value  = json_decode(json_encode($value));
             $schema = json_decode(json_encode($schema));

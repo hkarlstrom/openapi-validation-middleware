@@ -13,20 +13,7 @@ namespace HKarlstrom\Middleware\OpenApiValidation\Helpers;
 
 class Schema
 {
-    public static function addRecursive(array $schema, string $attribute, $value) : array
-    {
-        if (($schema['type'] ?? null) === 'object') {
-            $schema[$attribute] = $value;
-        }
-        foreach ($schema as $attr => $val) {
-            if (is_array($val)) {
-                $schema[$attr] = self::addRecursive($schema[$attr], $attribute, $value);
-            }
-        }
-        return $schema;
-    }
-
-    public static function mergeAllOf(array $schema) : array
+    public static function openApiToJsonSchema(array $schema) : array
     {
         if (isset($schema['allOf']) && is_array($schema['allOf'])) {
             $allOf = $schema['allOf'];
@@ -38,9 +25,13 @@ class Schema
             }
             $schema = \Ckr\Util\ArrayMerger::doMerge($schema, $merged);
         }
+        if ($schema['nullable'] ?? false) {
+            unset($schema['nullable']);
+            $schema['type'] = [$schema['type'], 'null'];
+        }
         foreach ($schema as $attr => $val) {
             if (is_array($val)) {
-                $schema[$attr] = self::mergeAllOf($val);
+                $schema[$attr] = self::openApiToJsonSchema($val);
             }
         }
         return $schema;
@@ -93,10 +84,5 @@ class Schema
         };
         $callback($schema, $formats);
         return $formats;
-    }
-
-    public static function isNullable(array $schema, array $path) : bool
-    {
-        return true;
     }
 }
