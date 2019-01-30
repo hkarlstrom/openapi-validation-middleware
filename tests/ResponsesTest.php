@@ -116,4 +116,15 @@ class ResponsesTest extends BaseTest
         $this->assertSame('string', $error['used']);
         $this->assertSame('header', $error['in']);
     }
+
+    public function testResponseWithNullableBodyAttributes() {
+        $response = $this->response('get', '/response/nullable', [
+            'customHandler' => function ($request, ResponseInterface $response) {
+                return $response->withJson(['ok' => null]);
+            },
+        ]);
+        $json = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(null, $json['ok']);
+    }
 }
