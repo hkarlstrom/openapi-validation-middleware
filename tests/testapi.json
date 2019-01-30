@@ -657,6 +657,28 @@
                     }
                 }
             }
+        },
+        "/response/nullable": {
+            "get": {
+                "operationId": "getNullableResponse",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "ok": {
+                                            "type": "boolean",
+                                            "nullable": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

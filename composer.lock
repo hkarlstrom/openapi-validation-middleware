@@ -91,16 +91,16 @@
         },
         {
             "name": "opis/json-schema",
-            "version": "1.0.14",
+            "version": "1.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opis/json-schema.git",
-                "reference": "d79f9f4ab1dbbb88799b49cb4194d4229c4f6ef6"
+                "reference": "ff5c65a03373bf5fbf6bf14a83d282e093091c8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opis/json-schema/zipball/d79f9f4ab1dbbb88799b49cb4194d4229c4f6ef6",
-                "reference": "d79f9f4ab1dbbb88799b49cb4194d4229c4f6ef6",
+                "url": "https://api.github.com/repos/opis/json-schema/zipball/ff5c65a03373bf5fbf6bf14a83d282e093091c8d",
+                "reference": "ff5c65a03373bf5fbf6bf14a83d282e093091c8d",
                 "shasum": ""
             },
             "require": {
@@ -149,7 +149,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2019-01-16T15:54:41+00:00"
+            "time": "2019-01-18T14:11:57+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -1846,16 +1846,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "4.0.1",
+            "version": "4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "febd209a219cea7b56ad799b30ebbea34b71eb8f"
+                "reference": "4a43e9af57b4afa663077b9bc85255dbc6e8a2bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/febd209a219cea7b56ad799b30ebbea34b71eb8f",
-                "reference": "febd209a219cea7b56ad799b30ebbea34b71eb8f",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/4a43e9af57b4afa663077b9bc85255dbc6e8a2bd",
+                "reference": "4a43e9af57b4afa663077b9bc85255dbc6e8a2bd",
                 "shasum": ""
             },
             "require": {
@@ -1892,7 +1892,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2018-11-25T09:31:21+00:00"
+            "time": "2019-01-28T15:26:03+00:00"
         },
         {
             "name": "sebastian/exporter",
