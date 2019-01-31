@@ -205,6 +205,42 @@
                 }
             }
         },
+        "/request/body/path/{foo}": {
+            "post": {
+                "operationId": "testRequestBodyPath",
+                "parameters":[
+                    {
+                        "name":"foo",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in":"path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "bar": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
         "/request/body/empty": {
             "post": {
                 "operationId": "testRequestBody",

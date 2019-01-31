@@ -75,6 +75,24 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('body', $errors[4]['in']);
     }
 
+    public function testRequestBodyPath()
+    {
+        $response = $this->response('post', '/request/body/path/test', [
+            'body' => [
+                'bar' => 123,
+            ],
+        ]);
+        $json = $this->json($response);
+        $err  = $json['errors'][0];
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('error_type', $err['code']);
+        $this->assertSame('foo', $err['name']);
+        $this->assertSame('test', $err['value']);
+        $this->assertSame('path', $err['in']);
+        $this->assertSame('integer', $err['expected']);
+        $this->assertSame('string', $err['used']);
+    }
+
     public function testEmptyRequestBody()
     {
         $response = $this->response('post', '/request/body/empty');
@@ -87,13 +105,13 @@ class RequestBodyTest extends BaseTest
     {
         $response = $this->response('put', '/all/of', [
             'body' => [
-                'data'=> [
+                'data' => [
                     'id'          => 'a',
                     'first_name'  => 'Jane',
                     'last_name'   => 'Doe',
                     'phone'       => '3333-11111111',
                     'nationality' => 'IE',
-                ]
+                ],
             ],
         ]);
         $json = $this->json($response);

@@ -260,7 +260,7 @@ class OpenApiValidation implements MiddlewareInterface
                 switch ($mediaType) {
                     case 'application/json':
                         if (!empty($requestBodyData)) {
-                            $errors = $this->validateObject($requestMediaType->schema, $requestBodyData);
+                            $errors = array_merge($errors, $this->validateObject($requestMediaType->schema, $requestBodyData));
                         }
                         break;
                     case 'multipart/form-data':
