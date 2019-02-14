@@ -215,20 +215,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $errors;
     }
 
-    private function checkFormat(string $type, string $format)
-    {
-        if (null === $this->formatContainer->get($type, $format)) {
-            try {
-                $this->formatContainer->add($type, $format, new OpenApiValidation\Formats\RespectValidator($format));
-            } catch (Exception $e) {
-                if ($this->options['missingFormatException']) {
-                    throw new MissingFormatException($type, $format);
-                }
-            }
-        }
-    }
-
-    private function validateRequest(ServerRequestInterface &$request, string $path, string $method, array $pathValues) : array
+    public function validateRequest(ServerRequestInterface &$request, string $path, string $method, array $pathValues) : array
     {
         $errors          = [];
         $parameters      = $this->openapi->getOperationParameters($path, $method);
@@ -270,6 +257,19 @@ class OpenApiValidation implements MiddlewareInterface
             }
         }
         return $errors;
+    }
+
+    private function checkFormat(string $type, string $format)
+    {
+        if (null === $this->formatContainer->get($type, $format)) {
+            try {
+                $this->formatContainer->add($type, $format, new OpenApiValidation\Formats\RespectValidator($format));
+            } catch (Exception $e) {
+                if ($this->options['missingFormatException']) {
+                    throw new MissingFormatException($type, $format);
+                }
+            }
+        }
     }
 
     private function deserialize(ServerRequestInterface $request, array &$pathValues, array $parameters) : ServerRequestInterface
