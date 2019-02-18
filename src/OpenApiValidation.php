@@ -210,7 +210,7 @@ class OpenApiValidation implements MiddlewareInterface
                 }
             }
             $errors   = $notAdditionalOrNullErrors;
-            $response = $response->withBody((new StreamFactory())->createStream(json_encode($responseBodyData)));
+            $response = $response->withBody((new StreamFactory())->createStream(json_encode($responseBodyData, JSON_PRESERVE_ZERO_FRACTION)));
         }
         return $errors;
     }
@@ -359,8 +359,8 @@ class OpenApiValidation implements MiddlewareInterface
         $validator->setFormats($this->formatContainer);
         $schema = SchemaHelper::openApiToJsonSchema($schema);
         try {
-            $value  = json_decode(json_encode($value));
-            $schema = json_decode(json_encode($schema));
+            $value  = json_decode(json_encode($value, JSON_PRESERVE_ZERO_FRACTION));
+            $schema = json_decode(json_encode($schema, JSON_PRESERVE_ZERO_FRACTION));
             $result = $validator->dataValidation($value, $schema, 99);
         } catch (Exception $e) {
             return [[
@@ -460,7 +460,7 @@ class OpenApiValidation implements MiddlewareInterface
                 $exampleResponseBodyData = array_merge($exampleResponseBodyData, $requestBodyData);
             }
             $response = $response
-                ->withBody((new StreamFactory())->createStream(json_encode($exampleResponseBodyData)))
+                ->withBody((new StreamFactory())->createStream(json_encode($exampleResponseBodyData, JSON_PRESERVE_ZERO_FRACTION)))
                 ->withHeader('Content-Type', $mediaType.';charset=utf-8');
             if (is_numeric($responseObject->statusCode)) {
                 $response = $response->withStatus($responseObject->statusCode);
@@ -483,7 +483,7 @@ class OpenApiValidation implements MiddlewareInterface
             $json['errors'] = $errors;
         }
         $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
-        return $response->withBody((new StreamFactory())->createStream(json_encode($json)));
+        return $response->withBody((new StreamFactory())->createStream(json_encode($json, JSON_PRESERVE_ZERO_FRACTION)));
     }
 
     private function parseErrors(ValidationError $error, $name = null, $in = null) : array
