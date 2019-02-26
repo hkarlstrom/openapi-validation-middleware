@@ -243,17 +243,10 @@ class OpenApiValidation implements MiddlewareInterface
         if ($requestBody && $requestMediaType = $requestBody->getContent($mediaType)) {
             if (empty($requestBodyData) && $requestBody->required) {
                 $errors[] = ['name' => 'requestBody', 'code' => 'error_required'];
-            } else {
-                switch ($mediaType) {
-                    case 'application/json':
-                        if (!empty($requestBodyData)) {
-                            $errors = array_merge($errors, $this->validateObject($requestMediaType->schema, $requestBodyData));
-                        }
-                        break;
-                    case 'multipart/form-data':
-                        $errors = array_merge($errors, $this->validateFormData($requestMediaType->schema, $requestMediaType->encoding, $request));
-                        break;
-                }
+            } elseif ($requestBodyData && $this->isJsonMediaType($mediaType)) {
+                $errors = array_merge($errors, $this->validateObject($requestMediaType->schema, $requestBodyData));
+            } elseif ('multipart/form-data' === $mediaType) {
+                $errors = array_merge($errors, $this->validateFormData($requestMediaType->schema, $requestMediaType->encoding, $request));
             }
         }
         return $errors;
@@ -522,5 +515,11 @@ class OpenApiValidation implements MiddlewareInterface
         }
         $contentTypeParts = preg_split('/\s*[;,]\s*/', $header[0]);
         return mb_strtolower($contentTypeParts[0]);
+    }
+
+    private function isJsonMediaType(string $type) : bool
+    {
+        // Allow JSON and JSON-formatted (eg: JSON-API) requests to be validated.
+        return 'application/json' === $type || false !== mb_strpos($type, '+json');
     }
 }
