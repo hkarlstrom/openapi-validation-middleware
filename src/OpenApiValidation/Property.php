@@ -27,7 +27,7 @@ class Property
         $this->name     = $name;
         $this->in       = $in;
         $this->required = $required;
-        $this->schema   = json_decode(json_encode($schema));
+        $this->schema   = json_decode(json_encode($schema, JSON_PRESERVE_ZERO_FRACTION));
         $this->value    = $value ?? null;
         if (null == $this->value) {
             return;
