@@ -715,6 +715,102 @@
                     }
                 }
             }
+        },
+        "/additionalProperties": {
+            "post": {
+                "operationId": "postAdditionalProperties",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "foo": {
+                                        "type": "object",
+                                        "properties": {
+                                            "bar": {
+                                                "type": "integer",
+                                                "description": "A number"
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/additionalProperties/hashmap/string": {
+            "post": {
+                "operationId": "postAdditionalProperties",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type":"string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/additionalProperties/hashmap/object": {
+            "post": {
+                "operationId": "postAdditionalProperties",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type":"object",
+                                    "required":["id"],
+                                    "properties":{
+                                        "id":{
+                                            "type":"integer"
+                                        },
+                                        "foo":{
+                                            "type":"integer"
+                                        },
+                                        "bar":{
+                                            "type":"string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
         }
     }
 }

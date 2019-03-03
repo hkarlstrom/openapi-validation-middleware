@@ -125,4 +125,62 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('body', $json['errors'][0]['in']);
         $this->assertSame('body', $json['errors'][1]['in']);
     }
+
+    public function testAdditionalAttributes()
+    {
+        $response = $this->response('post', '/additionalProperties', [
+            'body' => [
+                'foo' => [
+                    'bar'        => 100,
+                    'additional' => 'test',
+                ],
+            ],
+        ]);
+        $json = $this->json($response);
+        $this->assertSame('foo.additional', $json['errors'][0]['name']);
+        $this->assertSame('error_additional', $json['errors'][0]['code']);
+        $this->assertSame(400, $response->getStatusCode());
+    }
+    public function testHashMapString()
+    {
+        $response = $this->response('post', '/additionalProperties/hashmap/string', [
+            'body' => [
+                'en' => 'Hello',
+                'sv' => 'Tjena',
+                'fi' => 100
+            ],
+        ]);
+        $json = $this->json($response);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('fi', $json['errors'][0]['name']);
+        $this->assertSame('error_type', $json['errors'][0]['code']);
+        $this->assertSame('integer', $json['errors'][0]['used']);
+    }
+    public function testHashMapObject()
+    {
+        $response = $this->response('post', '/additionalProperties/hashmap/object', [
+            'body' => [
+                'aa' => [
+                    'id' => 10,
+                    'foo' => 'text',
+                    'bar' => 10
+                ],
+                'bb' => [
+                    'foo' => 10,
+                    'bar' => 'abc'
+                ]
+            ],
+        ]);
+        $json = $this->json($response);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('aa.foo', $json['errors'][0]['name']);
+        $this->assertSame('error_type', $json['errors'][0]['code']);
+        $this->assertSame('string', $json['errors'][0]['used']);
+        $this->assertSame('aa.bar', $json['errors'][1]['name']);
+        $this->assertSame('error_type', $json['errors'][1]['code']);
+        $this->assertSame('integer', $json['errors'][1]['used']);
+        $this->assertSame('bb.id', $json['errors'][2]['name']);
+        $this->assertSame('error_required', $json['errors'][2]['code']);
+        $this->assertSame('body', $json['errors'][2]['in']);
+    }
 }

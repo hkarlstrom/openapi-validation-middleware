@@ -502,6 +502,12 @@ class OpenApiValidation implements MiddlewareInterface
                 $err['name'] .= mb_strlen($err['name']) ? '.'.$err['missing'] : $err['missing'];
                 unset($err['missing'],$err['value']);
             }
+            if ('error_'.'$'.'schema' == $err['code']) {
+                // This is a quickfix as the opis/json-schema wont give any other error message
+                // There should not be any other reason this error_$schema occurs
+                $err['code'] = 'error_additional';
+                unset($err['schema']);
+            }
             $errors[] = $err;
         }
         return $errors;
