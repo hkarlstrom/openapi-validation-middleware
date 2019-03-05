@@ -324,6 +324,15 @@
                             }
                         },
                         "style": "pipeDelimited"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "style": "deepObject",
+                        "explode": true,
+                        "schema": {
+                            "type": "object"
+                        }
                     }
                 ],
                 "responses": {
