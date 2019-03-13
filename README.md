@@ -1,6 +1,6 @@
 # OpenAPI Validation Middleware
 
-PSR-7 and PSR-15 OpenAPI Validation Middleware
+PSR-7 and PSR-15 [OpenAPI](https://www.openapis.org/) Validation Middleware
 
 The middleware parses an OpenAPI definition document (openapi.json or openapi.yaml) and validates:
 * Request parameters (path, query)
