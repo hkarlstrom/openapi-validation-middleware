@@ -332,12 +332,25 @@ class OpenApiValidation implements MiddlewareInterface
                 continue;
             }
             try {
-                $result = $validator->dataValidation($property->value, $property->schema, 99);
+                $value  = json_decode(json_encode($property->value, JSON_PRESERVE_ZERO_FRACTION));
+                $result = $validator->dataValidation($value, $property->schema, 99);
             } catch (Exception $e) {
             }
             if (!$result->isValid()) {
                 foreach ($result->getErrors() as $error) {
-                    $errors = array_merge($errors, $this->parseErrors($error, $property->name, $property->in));
+                    foreach ($this->parseErrors($error, $property->name, $property->in) as $parsedError) {
+                        // As all query param values are strings type errors should be discarded
+                        $discard = false;
+                        if ('error_type' === $parsedError['code']
+                            && 'integer' === $parsedError['expected']
+                            && 'string' === $parsedError['used']
+                            && preg_match("/^[0-9]$/", $parsedError['value'])) {
+                            $discard = true;
+                        }
+                        if (!$discard) {
+                            $errors[] = $parsedError;
+                        }
+                    }
                 }
             }
         }
@@ -489,8 +502,11 @@ class OpenApiValidation implements MiddlewareInterface
                 $errors = array_merge($errors, $this->parseErrors($subError, $name, $in));
             }
         } else {
+            if ($error->dataPointer()) {
+                $name = trim($name.'.'.implode('.', $error->dataPointer()), '.');
+            }
             $err = [
-                'name'  => $name ?? implode('.', $error->dataPointer()),
+                'name'  => $name,
                 'code'  => 'error_'.$error->keyword(),
                 'value' => $error->data(),
             ];

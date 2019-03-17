@@ -166,9 +166,12 @@ class ParametersTest extends BaseTest
 
     public function testStyleDeepObject(): void
     {
-        $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'filter' => ['ids' => '1,2,3']]]);
+        $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'filter' => ['ids' => [1,'aaa',2]]]]);
         $json     = $this->json($response);
-
-        $this->assertTrue($json['ok']);
+        $error = $json['errors'][0];
+        $this->assertSame('filter.ids.1',$error['name']);
+        $this->assertSame('integer',$error['expected']);
+        $this->assertSame('string',$error['used']);
+        $this->assertSame('aaa',$error['value']);
     }
 }
