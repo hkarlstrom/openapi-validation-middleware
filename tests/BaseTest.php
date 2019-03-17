@@ -46,7 +46,7 @@ abstract class BaseTest extends TestCase
         if (isset($args['cors'])) {
             $request = $request->withHeader('Access-Control-Request-Method', 'GET');
         }
-        $app               = new App(['request' => $request]);
+        $app               = new App(['request' => $request, 'settings' => ['determineRouteBeforeAppMiddleware' => true]]);
         $c                 = $app->getContainer();
         $c['errorHandler'] = function ($c) {
             return function ($request, $response, $exception) use ($c) {

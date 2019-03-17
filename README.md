@@ -26,7 +26,12 @@ Use [Swagger/OpenAPI CLI](https://www.npmjs.com/package/swagger-cli) to validate
 
 Basic usage with Slim Framework.
 ```php
-$app = new Slim\App;
+$config = [
+    'settings' => [
+        'determineRouteBeforeAppMiddleware' => true,
+    ],
+];
+$app = new \Slim\App($config);
 $app->add(new HKarlstrom\Middleware\OpenApiValidation('/path/to/openapi.json'));
 ```
 
