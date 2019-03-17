@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9695f468225f36ee252f2bde16838ca",
+    "content-hash": "2babdb87447374cfa28ad6de337c1229",
     "packages": [
         {
             "name": "ckr/arraymerger",
@@ -47,16 +47,16 @@
         },
         {
             "name": "hkarlstrom/openapi-reader",
-            "version": "0.3.1",
+            "version": "0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hkarlstrom/openapi-reader.git",
-                "reference": "c511cc853e1800e9fd4c005c5e26c161e39c3d41"
+                "reference": "19ec8970e8fa200ff9ce998c6a0a48405919ef51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/c511cc853e1800e9fd4c005c5e26c161e39c3d41",
-                "reference": "c511cc853e1800e9fd4c005c5e26c161e39c3d41",
+                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/19ec8970e8fa200ff9ce998c6a0a48405919ef51",
+                "reference": "19ec8970e8fa200ff9ce998c6a0a48405919ef51",
                 "shasum": ""
             },
             "require": {
@@ -87,20 +87,20 @@
                 }
             ],
             "description": "Library for parsing OpenAPI JSON/YAML documentation files.",
-            "time": "2019-02-08T16:17:10+00:00"
+            "time": "2019-03-14T20:46:54+00:00"
         },
         {
             "name": "opis/json-schema",
-            "version": "1.0.15",
+            "version": "1.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opis/json-schema.git",
-                "reference": "ff5c65a03373bf5fbf6bf14a83d282e093091c8d"
+                "reference": "91f2464d44ffbaa34c3ee24e3bb6330690025859"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opis/json-schema/zipball/ff5c65a03373bf5fbf6bf14a83d282e093091c8d",
-                "reference": "ff5c65a03373bf5fbf6bf14a83d282e093091c8d",
+                "url": "https://api.github.com/repos/opis/json-schema/zipball/91f2464d44ffbaa34c3ee24e3bb6330690025859",
+                "reference": "91f2464d44ffbaa34c3ee24e3bb6330690025859",
                 "shasum": ""
             },
             "require": {
@@ -149,7 +149,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2019-01-18T14:11:57+00:00"
+            "time": "2019-03-07T16:12:16+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -585,16 +585,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.2.3",
+            "version": "v4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "d461670ee145092b7e2a56c1da7118f19cadadb0"
+                "reference": "761fa560a937fd7686e5274ff89dcfa87a5047df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/d461670ee145092b7e2a56c1da7118f19cadadb0",
-                "reference": "d461670ee145092b7e2a56c1da7118f19cadadb0",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/761fa560a937fd7686e5274ff89dcfa87a5047df",
+                "reference": "761fa560a937fd7686e5274ff89dcfa87a5047df",
                 "shasum": ""
             },
             "require": {
@@ -640,7 +640,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2019-01-16T20:35:37+00:00"
+            "time": "2019-02-23T15:17:42+00:00"
         },
         {
             "name": "tuupola/callable-handler",
@@ -1498,16 +1498,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.6",
+            "version": "7.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "09c85e14994df92e5ff1f5ec0b481bdb7d3d3df9"
+                "reference": "eb343b86753d26de07ecba7868fa983104361948"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/09c85e14994df92e5ff1f5ec0b481bdb7d3d3df9",
-                "reference": "09c85e14994df92e5ff1f5ec0b481bdb7d3d3df9",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/eb343b86753d26de07ecba7868fa983104361948",
+                "reference": "eb343b86753d26de07ecba7868fa983104361948",
                 "shasum": ""
             },
             "require": {
@@ -1525,7 +1525,7 @@
                 "phpunit/php-code-coverage": "^6.0.7",
                 "phpunit/php-file-iterator": "^2.0.1",
                 "phpunit/php-text-template": "^1.2.1",
-                "phpunit/php-timer": "^2.0",
+                "phpunit/php-timer": "^2.1",
                 "sebastian/comparator": "^3.0",
                 "sebastian/diff": "^3.0",
                 "sebastian/environment": "^4.0",
@@ -1578,7 +1578,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-02-18T09:24:50+00:00"
+            "time": "2019-03-16T07:31:17+00:00"
         },
         {
             "name": "pimple/pimple",
