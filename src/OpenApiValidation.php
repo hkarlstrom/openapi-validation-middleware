@@ -277,7 +277,7 @@ class OpenApiValidation implements MiddlewareInterface
                 case 'query':
                     $queryParams = $request->getQueryParams();
                     if (!isset($queryParams[$name])) {
-                        continue;
+                        break;
                     }
                     if (is_string($queryParams[$name])) {
                         $queryParams[$name] = $this->styleValue(
