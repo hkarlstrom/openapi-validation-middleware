@@ -140,6 +140,9 @@ class OpenApiValidation implements MiddlewareInterface
     {
         $code                  = $response->getStatusCode();
         $responseObject        = $this->openapi->getOperationResponse($path, $method, $code);
+        if (null === $responseObject) { // Not in file
+            return [];
+        }
         $headersSpecifications = $responseObject->getHeaders();
         $responseHeaders       = $response->getHeaders();
 
