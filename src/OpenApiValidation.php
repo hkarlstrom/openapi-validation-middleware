@@ -273,21 +273,16 @@ class OpenApiValidation implements MiddlewareInterface
                 continue;
             }
             $name = $parameter->name;
-            switch ($parameter->in) {
-                case 'query':
-                    $queryParams = $request->getQueryParams();
-                    if (!isset($queryParams[$name])) {
-                        break;
-                    }
-                    if (is_string($queryParams[$name])) {
-                        $queryParams[$name] = $this->styleValue(
-                            $parameter->in,
-                            $parameter->style,
-                            $parameter->explode,
-                            $queryParams[$name]);
-                    }
+            if ('query' === $parameter->in) {
+                $queryParams = $request->getQueryParams();
+                if (is_string($queryParams[$name] ?? null)) {
+                    $queryParams[$name] = $this->styleValue(
+                        $parameter->in,
+                        $parameter->style,
+                        $parameter->explode,
+                        $queryParams[$name]);
                     $request = $request->withQueryParams($queryParams);
-                    break;
+                }
             }
         }
         return $request;
@@ -344,7 +339,7 @@ class OpenApiValidation implements MiddlewareInterface
                         if ('error_type' === $parsedError['code']
                             && 'integer' === $parsedError['expected']
                             && 'string' === $parsedError['used']
-                            && preg_match("/^[0-9]$/", $parsedError['value'])) {
+                            && preg_match('/^[0-9]$/', $parsedError['value'])) {
                             $discard = true;
                         }
                         if (!$discard) {
