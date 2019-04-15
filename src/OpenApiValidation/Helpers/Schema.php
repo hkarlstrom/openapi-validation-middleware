@@ -27,7 +27,9 @@ class Schema
         }
         if ($schema['nullable'] ?? false) {
             unset($schema['nullable']);
-            $schema['type'] = [$schema['type'], 'null'];
+            if (isset($schema['type'])) {
+                $schema['type'] = [$schema['type'], 'null'];
+            }
         }
         foreach ($schema as $attr => $val) {
             if (is_array($val)) {
