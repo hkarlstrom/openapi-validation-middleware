@@ -128,4 +128,16 @@ class ResponsesTest extends BaseTest
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame(null, $json['ok']);
     }
+
+    public function testResponsesWithAnyOfBodyAttribute()
+    {
+        $response = $this->response('get', '/response/any-of', [
+            'customHandler' => function ($request, ResponseInterface $response) {
+                return $response->withJson(['value' => 15]);
+            },
+        ]);
+        $json = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(15, $json['value']);
+    }
 }

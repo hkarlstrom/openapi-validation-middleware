@@ -716,6 +716,7 @@
                 "operationId": "getNullableResponse",
                 "responses": {
                     "200": {
+                        "description": "Test for nullable type",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -825,6 +826,31 @@
                     },
                     "400": {
                         "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/response/any-of": {
+            "get": {
+                "operationId": "getAnyOf",
+                "responses": {
+                    "200": {
+                        "description": "Test for nullable type",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "anyOf": [
+                                                {"type": "string"},
+                                                {"type":  "integer"}
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
