@@ -49,6 +49,43 @@ class ParametersTest extends BaseTest
         $this->assertSame(['aaa', 'bbb'], $error['expected']);
     }
 
+    public function testQueryBoolean()
+    {
+        $response = $this->response('get', '/parameters', ['query' => ['boolean' => 'true', 'foo' => 'aaa']]);
+        $json     = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $response = $this->response('get', '/parameters', ['query' => ['boolean' => 'TrUe', 'foo' => 'aaa']]);
+        $json     = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $response = $this->response('get', '/parameters', ['query' => ['boolean' => 'false', 'foo' => 'aaa']]);
+        $json     = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $response = $this->response('get', '/parameters', ['query' => ['boolean' => 0, 'foo' => 'aaa']]);
+        $json     = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $response = $this->response('get', '/parameters', ['query' => ['boolean' => 1, 'foo' => 'aaa']]);
+        $json     = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $response = $this->response('get', '/parameters', ['query' => ['boolean' => 3, 'foo' => 'aaa']]);
+        $json     = $this->json($response);
+        $this->assertSame(400, $response->getStatusCode());
+        $error = $json['errors'][0];
+        $this->assertSame('boolean', $error['expected']);
+        $this->assertSame('3', $error['value']);
+
+        $response = $this->response('get', '/parameters', ['query' => ['boolean' => 'hello', 'foo' => 'aaa']]);
+        $json     = $this->json($response);
+        $error = $json['errors'][0];
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('boolean', $error['expected']);
+        $this->assertSame('hello', $error['value']);
+    }
+
     public function testAdditional()
     {
         $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'bar' => 'aaa']]);
@@ -164,14 +201,14 @@ class ParametersTest extends BaseTest
         $this->assertTrue($json['ok']);
     }
 
-    public function testStyleDeepObject(): void
+    public function testStyleDeepObject() : void
     {
-        $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'filter' => ['ids' => [1,'aaa',2]]]]);
+        $response = $this->response('get', '/parameters', ['query' => ['foo' => 'aaa', 'filter' => ['ids' => [1, 'aaa', 2]]]]);
         $json     = $this->json($response);
-        $error = $json['errors'][0];
-        $this->assertSame('filter.ids.1',$error['name']);
-        $this->assertSame('integer',$error['expected']);
-        $this->assertSame('string',$error['used']);
-        $this->assertSame('aaa',$error['value']);
+        $error    = $json['errors'][0];
+        $this->assertSame('filter.ids.1', $error['name']);
+        $this->assertSame('integer', $error['expected']);
+        $this->assertSame('string', $error['used']);
+        $this->assertSame('aaa', $error['value']);
     }
 }

@@ -297,6 +297,13 @@
                     },
                     {
                         "in": "query",
+                        "name": "boolean",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
                         "name": "list",
                         "schema": {
                             "type": "array",

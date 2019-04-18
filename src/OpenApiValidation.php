@@ -138,8 +138,8 @@ class OpenApiValidation implements MiddlewareInterface
 
     public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : array
     {
-        $code                  = $response->getStatusCode();
-        $responseObject        = $this->openapi->getOperationResponse($path, $method, $code);
+        $code           = $response->getStatusCode();
+        $responseObject = $this->openapi->getOperationResponse($path, $method, $code);
         if (null === $responseObject) { // Not in file
             return [];
         }
@@ -339,11 +339,16 @@ class OpenApiValidation implements MiddlewareInterface
                     foreach ($this->parseErrors($error, $property->name, $property->in) as $parsedError) {
                         // As all query param values are strings type errors should be discarded
                         $discard = false;
-                        if ('error_type' === $parsedError['code']
-                            && 'integer' === $parsedError['expected']
-                            && 'string' === $parsedError['used']
-                            && preg_match('/^[0-9]$/', $parsedError['value'])) {
-                            $discard = true;
+                        if ('query' === $parsedError['in']
+                            && 'error_type' === $parsedError['code']
+                            && 'string' === $parsedError['used']) {
+                            if ('integer' === $parsedError['expected']
+                                && preg_match('/^[0-9]$/', $parsedError['value'])) {
+                                $discard = true;
+                            } elseif ('boolean' === $parsedError['expected']
+                                && in_array(mb_strtolower($parsedError['value']), ['0', '1', 'true', 'false'])) {
+                                $discard = true;
+                            }
                         }
                         if (!$discard) {
                             $errors[] = $parsedError;
