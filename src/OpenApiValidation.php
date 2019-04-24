@@ -55,12 +55,16 @@ class OpenApiValidation implements MiddlewareInterface
     ];
     private $formatContainer;
 
-    public function __construct(string $filename, array $options = [])
+    /**
+     * @param string|array $schema
+     * @param array $options
+     */
+    public function __construct($schema, array $options = [])
     {
-        if (!file_exists($filename)) {
-            throw new FileNotFoundException($filename);
+        if (is_string($schema) && !file_exists($schema)) {
+            throw new FileNotFoundException($schema);
         }
-        $this->openapi = new OpenApiReader($filename);
+        $this->openapi = new OpenApiReader($schema);
         $allOptions    = array_keys($this->options);
         foreach ($options as $option => $value) {
             if (in_array($option, $allOptions)) {
