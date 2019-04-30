@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2babdb87447374cfa28ad6de337c1229",
+    "content-hash": "5646eb025636d3c4ea5299e2fe2ef61e",
     "packages": [
         {
             "name": "ckr/arraymerger",
@@ -47,16 +47,16 @@
         },
         {
             "name": "hkarlstrom/openapi-reader",
-            "version": "0.3.2",
+            "version": "0.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hkarlstrom/openapi-reader.git",
-                "reference": "19ec8970e8fa200ff9ce998c6a0a48405919ef51"
+                "reference": "d3be7e7d23563cf14b0cbe2939710c568600c378"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/19ec8970e8fa200ff9ce998c6a0a48405919ef51",
-                "reference": "19ec8970e8fa200ff9ce998c6a0a48405919ef51",
+                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/d3be7e7d23563cf14b0cbe2939710c568600c378",
+                "reference": "d3be7e7d23563cf14b0cbe2939710c568600c378",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 }
             ],
             "description": "Library for parsing OpenAPI JSON/YAML documentation files.",
-            "time": "2019-03-14T20:46:54+00:00"
+            "time": "2019-04-30T06:31:12+00:00"
         },
         {
             "name": "opis/json-schema",
@@ -511,7 +511,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -1500,16 +1500,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.8",
+            "version": "7.5.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c29c0525cf4572c11efe1db49a8b8aee9dfac58a"
+                "reference": "134669cf0eeac3f79bc7f0c793efbc158bffc160"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c29c0525cf4572c11efe1db49a8b8aee9dfac58a",
-                "reference": "c29c0525cf4572c11efe1db49a8b8aee9dfac58a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/134669cf0eeac3f79bc7f0c793efbc158bffc160",
+                "reference": "134669cf0eeac3f79bc7f0c793efbc158bffc160",
                 "shasum": ""
             },
             "require": {
@@ -1580,7 +1580,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-03-26T13:23:54+00:00"
+            "time": "2019-04-19T15:50:46+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -1848,16 +1848,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "4.1.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6fda8ce1974b62b14935adc02a9ed38252eca656"
+                "reference": "3095910f0f0fb155ac4021fc51a4a7a39ac04e8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6fda8ce1974b62b14935adc02a9ed38252eca656",
-                "reference": "6fda8ce1974b62b14935adc02a9ed38252eca656",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/3095910f0f0fb155ac4021fc51a4a7a39ac04e8a",
+                "reference": "3095910f0f0fb155ac4021fc51a4a7a39ac04e8a",
                 "shasum": ""
             },
             "require": {
@@ -1872,7 +1872,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.1-dev"
+                    "dev-master": "4.2-dev"
                 }
             },
             "autoload": {
@@ -1897,7 +1897,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2019-02-01T05:27:49+00:00"
+            "time": "2019-04-25T07:55:20+00:00"
         },
         {
             "name": "sebastian/exporter",
