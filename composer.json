@@ -19,7 +19,7 @@
         "psr/http-message": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "respect/validation": "^1.1",
-        "tuupola/callable-handler": "^0.4.0",
+        "tuupola/callable-handler": "^0.4.0|^1.0.0",
         "tuupola/http-factory": "^0.4.2"
     },
     "require-dev": {
