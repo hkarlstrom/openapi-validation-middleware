@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b49749b569be1e3d13a8afa9d0857b6",
+    "content-hash": "dff1550a4a58826e093e529821bcda50",
     "packages": [
         {
             "name": "ckr/arraymerger",
@@ -47,16 +47,16 @@
         },
         {
             "name": "hkarlstrom/openapi-reader",
-            "version": "0.3.3",
+            "version": "0.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hkarlstrom/openapi-reader.git",
-                "reference": "d3be7e7d23563cf14b0cbe2939710c568600c378"
+                "reference": "c39c731c9230e56eda9ea7985894ce0a0d7091a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/d3be7e7d23563cf14b0cbe2939710c568600c378",
-                "reference": "d3be7e7d23563cf14b0cbe2939710c568600c378",
+                "url": "https://api.github.com/repos/hkarlstrom/openapi-reader/zipball/c39c731c9230e56eda9ea7985894ce0a0d7091a1",
+                "reference": "c39c731c9230e56eda9ea7985894ce0a0d7091a1",
                 "shasum": ""
             },
             "require": {
@@ -87,20 +87,20 @@
                 }
             ],
             "description": "Library for parsing OpenAPI JSON/YAML documentation files.",
-            "time": "2019-04-30T06:31:12+00:00"
+            "time": "2019-05-13T06:11:21+00:00"
         },
         {
             "name": "opis/json-schema",
-            "version": "1.0.16",
+            "version": "1.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opis/json-schema.git",
-                "reference": "91f2464d44ffbaa34c3ee24e3bb6330690025859"
+                "reference": "6e2782df93bc2b581639a583793e341529c56111"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opis/json-schema/zipball/91f2464d44ffbaa34c3ee24e3bb6330690025859",
-                "reference": "91f2464d44ffbaa34c3ee24e3bb6330690025859",
+                "url": "https://api.github.com/repos/opis/json-schema/zipball/6e2782df93bc2b581639a583793e341529c56111",
+                "reference": "6e2782df93bc2b581639a583793e341529c56111",
                 "shasum": ""
             },
             "require": {
@@ -149,7 +149,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2019-03-07T16:12:16+00:00"
+            "time": "2019-05-10T19:07:20+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -1500,16 +1500,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.9",
+            "version": "7.5.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "134669cf0eeac3f79bc7f0c793efbc158bffc160"
+                "reference": "d7d9cee051d03ed98df6023aad93f7902731a780"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/134669cf0eeac3f79bc7f0c793efbc158bffc160",
-                "reference": "134669cf0eeac3f79bc7f0c793efbc158bffc160",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d7d9cee051d03ed98df6023aad93f7902731a780",
+                "reference": "d7d9cee051d03ed98df6023aad93f7902731a780",
                 "shasum": ""
             },
             "require": {
@@ -1580,7 +1580,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-04-19T15:50:46+00:00"
+            "time": "2019-05-09T05:06:47+00:00"
         },
         {
             "name": "pimple/pimple",
