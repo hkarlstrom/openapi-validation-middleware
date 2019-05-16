@@ -271,6 +271,37 @@
                 }
             }
         },
+        "/request/body/empty/required": {
+            "post": {
+                "operationId": "testRequestBody",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "foo": {
+                                        "type": "string"
+                                    },
+                                    "bar": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
         "/parameters": {
             "get": {
                 "operationId": "testParameters",

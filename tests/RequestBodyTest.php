@@ -141,13 +141,14 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('error_additional', $json['errors'][0]['code']);
         $this->assertSame(400, $response->getStatusCode());
     }
+
     public function testHashMapString()
     {
         $response = $this->response('post', '/additionalProperties/hashmap/string', [
             'body' => [
                 'en' => 'Hello',
                 'sv' => 'Tjena',
-                'fi' => 100
+                'fi' => 100,
             ],
         ]);
         $json = $this->json($response);
@@ -156,19 +157,20 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('error_type', $json['errors'][0]['code']);
         $this->assertSame('integer', $json['errors'][0]['used']);
     }
+
     public function testHashMapObject()
     {
         $response = $this->response('post', '/additionalProperties/hashmap/object', [
             'body' => [
                 'aa' => [
-                    'id' => 10,
+                    'id'  => 10,
                     'foo' => 'text',
-                    'bar' => 10
+                    'bar' => 10,
                 ],
                 'bb' => [
                     'foo' => 10,
-                    'bar' => 'abc'
-                ]
+                    'bar' => 'abc',
+                ],
             ],
         ]);
         $json = $this->json($response);
@@ -182,5 +184,13 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('bb.id', $json['errors'][2]['name']);
         $this->assertSame('error_required', $json['errors'][2]['code']);
         $this->assertSame('body', $json['errors'][2]['in']);
+    }
+
+    public function testEmptyBody()
+    {
+        $response = $this->response('post', '/request/body/empty/required', ['body' => []]);
+        $json     = $this->json($response);
+        $this->assertTrue($json['ok']);
+        $this->assertSame(200, $response->getStatusCode());
     }
 }

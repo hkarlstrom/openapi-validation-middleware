@@ -57,7 +57,7 @@ class OpenApiValidation implements MiddlewareInterface
 
     /**
      * @param string|array $schema
-     * @param array $options
+     * @param array        $options
      */
     public function __construct($schema, array $options = [])
     {
@@ -248,7 +248,7 @@ class OpenApiValidation implements MiddlewareInterface
         $mediaType       = $this->getMediaType($request);
 
         if ($requestBody && $requestMediaType = $requestBody->getContent($mediaType)) {
-            if (empty($requestBodyData) && $requestBody->required) {
+            if (null === $requestBodyData && $requestBody->required) {
                 $errors[] = ['name' => 'requestBody', 'code' => 'error_required'];
             } elseif ($requestBodyData && $this->isJsonMediaType($mediaType)) {
                 $errors = array_merge($errors, $this->validateObject($requestMediaType->schema, $requestBodyData));
@@ -338,7 +338,7 @@ class OpenApiValidation implements MiddlewareInterface
                 $result = $validator->dataValidation($value, $property->schema, 99);
             } catch (Exception $e) {
             }
-            if (!$result->isValid()) {
+            if (isset($result) && !$result->isValid()) {
                 foreach ($result->getErrors() as $error) {
                     foreach ($this->parseErrors($error, $property->name, $property->in) as $parsedError) {
                         // As all query param values are strings type errors should be discarded
