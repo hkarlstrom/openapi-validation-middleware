@@ -238,6 +238,16 @@ class OpenApiValidation implements MiddlewareInterface
             $values['query'] = $request->getQueryParams();
         }
 
+        $headers = [];
+        array_walk(
+            $request->getHeaders(), 
+            function ($value, $key) use (&$headers) {
+                $headers[$key] = array_shift($value);
+            }
+        );
+
+        $values['header'] = $headers;
+
         $properties = [];
         foreach ($parameters as $p) {
             $properties[] = Property::fromParameter($p, $values[$p->in][$p->name] ?? null);
