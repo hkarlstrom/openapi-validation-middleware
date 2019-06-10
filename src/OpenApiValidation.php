@@ -238,20 +238,19 @@ class OpenApiValidation implements MiddlewareInterface
             $values['query'] = $request->getQueryParams();
         }
 
-        $headers = [];
-        array_walk(
-            $request->getHeaders(), 
-            function ($value, $key) use (&$headers) {
-                $headers[$key] = array_shift($value);
-            }
-        );
-
-        $values['header'] = $headers;
-
         $properties = [];
         foreach ($parameters as $p) {
-            $properties[] = Property::fromParameter($p, $values[$p->in][$p->name] ?? null);
+            if ($p->in === 'header') {
+                $value = $request->getHeader($p->name);
+                if (is_array($value)) {
+                    $value = array_shift($value);
+                }
+                $properties[] = Property::fromParameter($p, $value ?? null);
+            } else {
+                $properties[] = Property::fromParameter($p, $values[$p->in][$p->name] ?? null);
+            }
         }
+
         $errors          = array_merge($errors, $this->validateProperties($properties));
         $requestBody     = $this->openapi->getOperationRequestBody($path, $method);
         $requestBodyData = $request->getParsedBody();
