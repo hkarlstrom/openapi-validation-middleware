@@ -39,7 +39,11 @@ abstract class BaseTest extends TestCase
         ]);
         $request = Request::createFromEnvironment($env);
         if (isset($args['body'])) {
-            $request->getBody()->write(json_encode($args['body']));
+            if (is_array($args['body'])) {
+                $request->getBody()->write(json_encode($args['body']));
+            } else {
+                $request->getBody()->write($args['body']);
+            }
             $request->getBody()->rewind();
             $request = $request->withHeader('Content-Type', $args['bodyContentType'] ?? 'application/json');
         }

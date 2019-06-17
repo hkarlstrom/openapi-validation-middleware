@@ -204,7 +204,7 @@ class OpenApiValidation implements MiddlewareInterface
         if (null === $responseBodyData && $responseSchema) {
             return [['name' => 'responseBody', 'code' => 'error_required']];
         }
-        $errors = $this->validateObject($responseSchema, $responseBodyData);
+        $errors = $this->validateObject($responseSchema, json_encode($responseBodyData, JSON_PRESERVE_ZERO_FRACTION));
         if ($this->options['stripResponse']) {
             $notAdditionalOrNullErrors = [];
             foreach ($errors as $error) {
@@ -250,7 +250,14 @@ class OpenApiValidation implements MiddlewareInterface
         if ($requestBody && $requestMediaType = $requestBody->getContent($mediaType)) {
             if (null === $requestBodyData && $requestBody->required) {
                 $errors[] = ['name' => 'requestBody', 'code' => 'error_required'];
-            } elseif ($requestBodyData && $this->isJsonMediaType($mediaType)) {
+            } elseif (null !== $requestBodyData && $this->isJsonMediaType($mediaType)) {
+
+                if (empty($requestBodyData)) {
+                    // We don't know if the empty request body was an array [] or a object {}, both are decoded to [] by json_decode
+                    $requestBodyData = $request->getBody();
+                } else {
+                    $requestBodyData = json_encode($requestBodyData, JSON_PRESERVE_ZERO_FRACTION);
+                }
                 $errors = array_merge($errors, $this->validateObject($requestMediaType->schema, $requestBodyData));
             } elseif ('multipart/form-data' === $mediaType) {
                 $errors = array_merge($errors, $this->validateFormData($requestMediaType->schema, $requestMediaType->encoding, $request));
@@ -364,7 +371,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $errors;
     }
 
-    private function validateObject(array $schema, array $value) : array
+    private function validateObject(array $schema, string $value) : array
     {
         $errors = [];
         foreach (SchemaHelper::getFormats($schema) as $f) {
@@ -374,7 +381,7 @@ class OpenApiValidation implements MiddlewareInterface
         $validator->setFormats($this->formatContainer);
         $schema = SchemaHelper::openApiToJsonSchema($schema);
         try {
-            $value  = json_decode(json_encode($value, JSON_PRESERVE_ZERO_FRACTION));
+            $value  = json_decode($value);
             $schema = json_decode(json_encode($schema, JSON_PRESERVE_ZERO_FRACTION));
             $result = $validator->dataValidation($value, $schema, 99);
         } catch (Exception $e) {

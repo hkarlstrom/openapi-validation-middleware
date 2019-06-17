@@ -188,9 +188,17 @@ class RequestBodyTest extends BaseTest
 
     public function testEmptyBody()
     {
-        $response = $this->response('post', '/request/body/empty/required', ['body' => []]);
+        $response = $this->response('post', '/request/body/empty/required');
         $json     = $this->json($response);
-        $this->assertTrue($json['ok']);
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('requestBody', $json['errors'][0]['name']);
+        $this->assertSame('error_required', $json['errors'][0]['code']);
+
+        $response = $this->response('post', '/request/body/empty/required', ['body' => '{}']);
+        $json     = $this->json($response);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('foo', $json['errors'][0]['name']);
+        $this->assertSame('error_required', $json['errors'][0]['code']);
+        $this->assertSame('body', $json['errors'][0]['in']);
     }
 }
