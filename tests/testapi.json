@@ -205,6 +205,41 @@
                 }
             }
         },
+        "/request/body/nullable-oneof": {
+            "post": {
+                "operationId": "testRequestBodyNullableOneOf",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "foo": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ],
+                                        "nullable": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
         "/request/body/path/{foo}": {
             "post": {
                 "operationId": "testRequestBodyPath",
