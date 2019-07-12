@@ -30,4 +30,15 @@ class Json
         }
         return $json;
     }
+    public static function additionalProperties(array $json, bool $allowAdditionalProperties) {
+        if (isset($json['properties'])) {
+            $json['additionalProperties'] = $allowAdditionalProperties;
+        }
+        foreach ($json as $key => &$value) {
+            if (is_array($value)) {
+                $value = self::additionalProperties($value,$allowAdditionalProperties);
+            }
+        }
+        return $json;
+    }
 }

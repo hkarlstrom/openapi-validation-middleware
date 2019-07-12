@@ -69,6 +69,7 @@ class ResponsesTest extends BaseTest
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('test', $json['foo']);
         $this->assertSame(100, $json['bar']);
+        $this->assertFalse(isset($json['extra']));
     }
 
     public function testResponseEmpty()

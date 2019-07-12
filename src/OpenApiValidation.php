@@ -204,6 +204,9 @@ class OpenApiValidation implements MiddlewareInterface
         if (null === $responseBodyData && $responseSchema) {
             return [['name' => 'responseBody', 'code' => 'error_required']];
         }
+        if ($this->options['stripResponse']) {
+            $responseSchema = JsonHelper::additionalProperties($responseSchema, false);
+        }
         $errors = $this->validateObject($responseSchema, json_encode($responseBodyData, JSON_PRESERVE_ZERO_FRACTION));
         if ($this->options['stripResponse']) {
             $notAdditionalOrNullErrors = [];
