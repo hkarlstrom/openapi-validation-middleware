@@ -408,6 +408,7 @@ class OpenApiValidation implements MiddlewareInterface
         $formData      = $request->getParsedBody();
         $properties    = [];
         $uploadedFiles = $request->getUploadedFiles();
+        $schema = SchemaHelper::openApiToJsonSchema($schema);
         foreach ($schema['properties'] as $name => $property) {
             if (isset($property['format']) && in_array($property['format'], ['binary', 'base64'])) {
                 if (in_array($name, $schema['required'] ?? []) && !isset($uploadedFiles[$name])) {
