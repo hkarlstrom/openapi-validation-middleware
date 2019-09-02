@@ -2,7 +2,13 @@
     "name": "hkarlstrom/openapi-validation-middleware",
     "type": "library",
     "description": "PSR-7 and PSR-15 OpenAPI Validation Middleware",
-    "keywords": ["openapi", "validation", "middleware", "psr-7", "psr-15"],
+    "keywords": [
+        "openapi",
+        "validation",
+        "middleware",
+        "psr-7",
+        "psr-15"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -23,6 +29,7 @@
         "tuupola/http-factory": "^1.1"
     },
     "require-dev": {
+        "phpstan/phpstan": "^0.11.15",
         "phpunit/phpunit": "^7.3",
         "slim/slim": "^3.11"
     },
@@ -40,6 +47,7 @@
         "sort-packages": true
     },
     "scripts": {
+        "analyse": "./vendor/bin/phpstan analyse -l 4 -c phpstan.neon src",
         "test": "./vendor/bin/phpunit"
     }
 }

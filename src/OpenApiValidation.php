@@ -182,13 +182,16 @@ class OpenApiValidation implements MiddlewareInterface
         }
         $properties = [];
         foreach ($headersSpecifications as $headerName => $header) {
-            $properties[] = Property::fromHeader($headerName, $header, $normalizedResponseHeaders[mb_strtolower($headerName)] ?? null);
+            if (is_string($headerName)) {
+                $properties[] = Property::fromHeader($headerName, $header, $normalizedResponseHeaders[mb_strtolower($headerName)] ?? null);
+            }
         }
         return $this->validateProperties($properties);
     }
 
     public function validateResponseBody(ResponseInterface &$response, string $path, string $method) : array
     {
+        $errors           = [];
         $responseBodyData = json_decode($response->getBody()->__toString(), true);
         $code             = $response->getStatusCode();
         $mediaType        = $this->getMediaType($response);
@@ -207,7 +210,10 @@ class OpenApiValidation implements MiddlewareInterface
         if ($this->options['stripResponse']) {
             $responseSchema = JsonHelper::additionalProperties($responseSchema, false);
         }
-        $errors = $this->validateObject($responseSchema, json_encode($responseBodyData, JSON_PRESERVE_ZERO_FRACTION));
+        $responseBodyDataJson = json_encode($responseBodyData, JSON_PRESERVE_ZERO_FRACTION);
+        if (is_string($responseBodyDataJson)) {
+            $errors = $this->validateObject($responseSchema, $responseBodyDataJson);
+        }
         if ($this->options['stripResponse']) {
             $notAdditionalOrNullErrors = [];
             foreach ($errors as $error) {
@@ -254,7 +260,6 @@ class OpenApiValidation implements MiddlewareInterface
             if (null === $requestBodyData && $requestBody->required) {
                 $errors[] = ['name' => 'requestBody', 'code' => 'error_required'];
             } elseif (null !== $requestBodyData && $this->isJsonMediaType($mediaType)) {
-
                 if (empty($requestBodyData)) {
                     // We don't know if the empty request body was an array [] or a object {}, both are decoded to [] by json_decode
                     $requestBodyData = $request->getBody();
@@ -325,7 +330,7 @@ class OpenApiValidation implements MiddlewareInterface
     {
         $errors = [];
         foreach ($properties as $property) {
-            if (isset($property->schema->format)) {
+            if (isset($property->schema->type, $property->schema->format)) {
                 $this->checkFormat($property->schema->type, $property->schema->format);
             }
         }
@@ -430,7 +435,7 @@ class OpenApiValidation implements MiddlewareInterface
                     'form-data',
                     in_array($name, $schema['required'] ?? []),
                     $property,
-                    $formData[$name]
+                    $formData[$name] ?? null
                 );
             }
         }
@@ -464,7 +469,7 @@ class OpenApiValidation implements MiddlewareInterface
     private function setDefaultParamterValues(array $parameters, ServerRequestInterface $request, array $values) : ServerRequestInterface
     {
         foreach ($parameters as $parameter) {
-            if ('query' == $parameter->in && !isset($values['query'][$parameter->name]) && isset($parameter->schema->default)) {
+            if ('query' == $parameter->in && !isset($values['query'][$parameter->name]) && isset($parameter->name, $parameter->schema->default)) {
                 $values['query'][$parameter->name] = $parameter->schema->default;
             }
         }
@@ -488,7 +493,7 @@ class OpenApiValidation implements MiddlewareInterface
                 ->withBody((new StreamFactory())->createStream(json_encode($exampleResponseBodyData, JSON_PRESERVE_ZERO_FRACTION)))
                 ->withHeader('Content-Type', $mediaType.';charset=utf-8');
             if (is_numeric($responseObject->statusCode)) {
-                $response = $response->withStatus($responseObject->statusCode);
+                $response = $response->withStatus(intval($responseObject->statusCode));
             }
         }
         return $response;
