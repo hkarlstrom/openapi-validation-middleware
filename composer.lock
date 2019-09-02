@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dff1550a4a58826e093e529821bcda50",
+    "content-hash": "45c68bc74606a9b49bea8ff7e94dc003",
     "packages": [
         {
             "name": "ckr/arraymerger",
@@ -697,26 +697,32 @@
         },
         {
             "name": "tuupola/http-factory",
-            "version": "0.4.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tuupola/http-factory.git",
-                "reference": "c7e2712d5c4f49ddae704ae1f42854f437ddb028"
+                "reference": "5fbde4c65a10d09a85652684a6e569542265a749"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tuupola/http-factory/zipball/c7e2712d5c4f49ddae704ae1f42854f437ddb028",
-                "reference": "c7e2712d5c4f49ddae704ae1f42854f437ddb028",
+                "url": "https://api.github.com/repos/tuupola/http-factory/zipball/5fbde4c65a10d09a85652684a6e569542265a749",
+                "reference": "5fbde4c65a10d09a85652684a6e569542265a749",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1",
                 "psr/http-factory": "^1.0"
             },
+            "conflict": {
+                "nyholm/psr7": "<1.0"
+            },
+            "provide": {
+                "psr/http-factory-implementation": "^1.0"
+            },
             "require-dev": {
                 "http-interop/http-factory-tests": "^0.5.0",
                 "overtrue/phplint": "^1.0",
-                "phpunit/phpunit": "^6.5",
+                "phpunit/phpunit": "^6.0|^7.0",
                 "squizlabs/php_codesniffer": "^3.0"
             },
             "type": "library",
@@ -732,9 +738,9 @@
             "authors": [
                 {
                     "name": "Mika Tuupola",
+                    "role": "Developer",
                     "email": "tuupola@appelsiini.net",
-                    "homepage": "http://www.appelsiini.net/",
-                    "role": "Developer"
+                    "homepage": "https://appelsiini.net/"
                 }
             ],
             "description": "Lightweight autodiscovering PSR-17 HTTP factories",
@@ -744,7 +750,7 @@
                 "psr-17",
                 "psr-7"
             ],
-            "time": "2018-08-09T09:02:33+00:00"
+            "time": "2019-08-07T07:10:58+00:00"
         }
     ],
     "packages-dev": [
