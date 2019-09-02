@@ -205,6 +205,41 @@
                 }
             }
         },
+        "/request/body/nullable-oneof": {
+            "post": {
+                "operationId": "testRequestBodyNullableOneOf",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "foo": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ],
+                                        "nullable": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
         "/request/body/path/{foo}": {
             "post": {
                 "operationId": "testRequestBodyPath",
@@ -918,6 +953,38 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/headers": {
+            "get": {
+                "operationId": "testHeaders",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$"
+                        },
+                        "required": true,
+                        "name": "X-Required"
+                    },
+                    {
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false,
+                        "name": "X-Optional"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OkResponse"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorResponse"
                     }
                 }
             }

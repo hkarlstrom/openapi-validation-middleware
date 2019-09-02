@@ -211,4 +211,18 @@ class RequestBodyTest extends BaseTest
         ]);
         $this->assertSame(200, $response->getStatusCode());
     }
+
+    public function testRequestBodyNullableOneOf()
+    {
+        $response = $this->response('post', '/request/body/nullable-oneof', [
+            'body' => [
+                'foo' => null,
+            ],
+        ]);
+        $json = $this->json($response);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertTrue($json['ok']);
+        $this->assertArrayNotHasKey('errors', $json);
+
+    }
 }

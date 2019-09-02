@@ -29,6 +29,8 @@ class Schema
             unset($schema['nullable']);
             if (isset($schema['type'])) {
                 $schema['type'] = [$schema['type'], 'null'];
+            } else if (isset($schema['oneOf'])) {
+                $schema['oneOf'][] = ['type' => 'null'];
             }
         }
         foreach ($schema as $attr => $val) {

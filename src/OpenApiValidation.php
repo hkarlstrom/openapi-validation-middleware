@@ -249,8 +249,17 @@ class OpenApiValidation implements MiddlewareInterface
 
         $properties = [];
         foreach ($parameters as $p) {
-            $properties[] = Property::fromParameter($p, $values[$p->in][$p->name] ?? null);
+            if ($p->in === 'header') {
+                $value = $request->getHeader($p->name);
+                if (is_array($value)) {
+                    $value = array_shift($value);
+                }
+                $properties[] = Property::fromParameter($p, $value ?? null);
+            } else {
+                $properties[] = Property::fromParameter($p, $values[$p->in][$p->name] ?? null);
+            }
         }
+
         $errors          = array_merge($errors, $this->validateProperties($properties));
         $requestBody     = $this->openapi->getOperationRequestBody($path, $method);
         $requestBodyData = $request->getParsedBody();
@@ -414,6 +423,7 @@ class OpenApiValidation implements MiddlewareInterface
         $formData      = $request->getParsedBody();
         $properties    = [];
         $uploadedFiles = $request->getUploadedFiles();
+        $schema = SchemaHelper::openApiToJsonSchema($schema);
         foreach ($schema['properties'] as $name => $property) {
             if (isset($property['format']) && in_array($property['format'], ['binary', 'base64'])) {
                 if (in_array($name, $schema['required'] ?? []) && !isset($uploadedFiles[$name])) {
