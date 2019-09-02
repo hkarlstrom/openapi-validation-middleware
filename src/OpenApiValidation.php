@@ -548,6 +548,11 @@ class OpenApiValidation implements MiddlewareInterface
                 $err['code'] = 'error_additional';
                 unset($err['schema']);
             }
+            // As the request body is parsed as an array, empty object and empty array will both be []
+            // Remove these errors
+            if ('error_type' == $err['code'] && empty($err['value']) && 'object' == $err['expected'] && 'array' == $err['used']) {
+                return [];
+            }
             $errors[] = $err;
         }
         return $errors;

@@ -201,4 +201,14 @@ class RequestBodyTest extends BaseTest
         $this->assertSame('error_required', $json['errors'][0]['code']);
         $this->assertSame('body', $json['errors'][0]['in']);
     }
+
+    public function testEmptyObject()
+    {
+        $response = $this->response('patch', '/request/empty-object', [
+            'body' => [
+                'metadata' => []
+            ]
+        ]);
+        $this->assertSame(200, $response->getStatusCode());
+    }
 }
