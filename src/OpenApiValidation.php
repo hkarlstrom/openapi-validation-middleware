@@ -276,7 +276,8 @@ class OpenApiValidation implements MiddlewareInterface
                     $requestBodyData = json_encode($requestBodyData, JSON_PRESERVE_ZERO_FRACTION);
                 }
                 $errors = array_merge($errors, $this->validateObject($requestMediaType->schema, $requestBodyData));
-            } elseif ('multipart/form-data' === $mediaType) {
+            } elseif ('multipart/form-data' === $mediaType
+                || 'application/x-www-form-urlencoded' === $mediaType) {
                 $errors = array_merge($errors, $this->validateFormData($requestMediaType->schema, $requestMediaType->encoding, $request));
             }
         }
