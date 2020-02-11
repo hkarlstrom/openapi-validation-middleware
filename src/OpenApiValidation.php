@@ -204,6 +204,9 @@ class OpenApiValidation implements MiddlewareInterface
             $mediaType      = $responseObject->getDefaultMediaType();
             $responseSchema = $responseObject->getContent($mediaType)->schema;
         }
+        if ($mediaType !== 'application/json') { // not supposed to be a json response. can't validate reliably.
+            return [];
+        }
         if (null === $responseBodyData && $responseSchema) {
             return [['name' => 'responseBody', 'code' => 'error_required']];
         }
