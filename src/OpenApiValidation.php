@@ -269,7 +269,7 @@ class OpenApiValidation implements MiddlewareInterface
         $mediaType       = $this->getMediaType($request);
 
         if ($requestBody && $requestMediaType = $requestBody->getContent($mediaType)) {
-            if ((null === $requestBodyData || empty($requestBodyData)) && $requestBody->required) {
+            if (null === $requestBodyData && $requestBody->required) {
                 $errors[] = ['name' => 'requestBody', 'code' => 'error_required'];
             } elseif (null !== $requestBodyData && $this->isJsonMediaType($mediaType)) {
                 if (empty($requestBodyData)) {
