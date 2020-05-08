@@ -344,7 +344,9 @@ class OpenApiValidation implements MiddlewareInterface
         $errors = [];
         foreach ($properties as $property) {
             if (isset($property->schema->type, $property->schema->format)) {
-                $this->checkFormat($property->schema->type, $property->schema->format);
+                $type = $property->schema->type;
+                $type = is_array($type) ? current($type) : $type;
+                $this->checkFormat($type, $property->schema->format);
             }
         }
         $validator = new Validator();
