@@ -52,21 +52,23 @@ $app->add(new HKarlstrom\Middleware\OpenApiValidation('/path/to/openapi.json'),[
 ]);
 ```
 
-| type                    | format    | default | description |
-| ----------------------- | ----------| ------- | --- |
-| additionalParameters    | bool      | false   | Allow additional parameters in query |
-| beforeHandler           | callable  | null    | Instructions [below](README.md#beforehandler) |
-| errorHandler            | callable  | null    | Instructions [below](README.md#errorhandler) |
-| exampleResponse         | bool      | false   | Return example response from openapi.json/openapi.yaml if route implementation is empty |
-| missingFormatException  | bool      | true    | Throw an exception if a format validator is missing |
-| pathNotFoundException   | bool      | true    | Throw an exception if the path is not found in openapi.json/openapi.yaml |
-| setDefaultParameters    | bool      | false   | Set the default parameter values for missing parameters and alter the request object |
-| stripResponse           | bool      | false   | Strip additional attributes from response to prevent response validation error |
-| stripResponseHeaders    | bool      | false   | Strip additional headers from response to prevent response validation error |
-| validateError           | bool      | false   | Should the error response be validated |
-| validateRequest         | bool      | true    | Should the request be validated |
-| validateResponse        | bool      | true    | Should the response's body be validated |
-| validateResponseHeaders | bool      | false   | Should the response's headers be validated |
+
+| type                       | format    | default | description |
+| -------------------------- | --------- | ------- | --- |
+| additionalParameters       | bool      | false   | Allow additional parameters in query |
+| beforeHandler              | callable  | null    | Instructions [below](README.md#beforehandler) |
+| errorHandler               | callable  | null    | Instructions [below](README.md#errorhandler) |
+| exampleResponse            | bool      | false   | Return example response from openapi.json/openapi.yaml if route implementation is empty |
+| missingFormatException     | bool      | true    | Throw an exception if a format validator is missing |
+| pathNotFoundException      | bool      | true    | Throw an exception if the path is not found in openapi.json/openapi.yaml |
+| setDefaultParameters       | bool      | false   | Set the default parameter values for missing parameters and alter the request object |
+| strictEmptyArrayValidation | bool      | false   | Consider empty array when object is expected as validation error |
+| stripResponse              | bool      | false   | Strip additional attributes from response to prevent response validation error |
+| stripResponseHeaders       | bool      | false   | Strip additional headers from response to prevent response validation error |
+| validateError              | bool      | false   | Should the error response be validated |
+| validateRequest            | bool      | true    | Should the request be validated |
+| validateResponse           | bool      | true    | Should the response's body be validated |
+| validateResponseHeaders    | bool      | false   | Should the response's headers be validated |
 
 
 #### beforeHandler
