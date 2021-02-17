@@ -52,6 +52,7 @@ class OpenApiValidation implements MiddlewareInterface
         'validateRequest'         => true,
         'validateResponse'        => true,
         'validateResponseHeaders' => false,
+        'strictEmptyArrayValidation' => false
     ];
     private $formatContainer;
 
@@ -344,7 +345,9 @@ class OpenApiValidation implements MiddlewareInterface
         $errors = [];
         foreach ($properties as $property) {
             if (isset($property->schema->type, $property->schema->format)) {
-                $this->checkFormat($property->schema->type, $property->schema->format);
+                $type = $property->schema->type;
+                $type = is_array($type) ? current($type) : $type;
+                $this->checkFormat($type, $property->schema->format);
             }
         }
         $validator = new Validator();
@@ -564,8 +567,10 @@ class OpenApiValidation implements MiddlewareInterface
             }
             // As the request body is parsed as an array, empty object and empty array will both be []
             // Remove these errors
-            if ('error_type' == $err['code'] && empty($err['value']) && 'object' == $err['expected'] && 'array' == $err['used']) {
-                return [];
+            if (!$this->options['strictEmptyArrayValidation']) {
+                if ('error_type' == $err['code'] && empty($err['value']) && 'object' == $err['expected'] && 'array' == $err['used']) {
+                    return [];
+                }
             }
             $errors[] = $err;
         }

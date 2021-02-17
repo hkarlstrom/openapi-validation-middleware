@@ -48,6 +48,27 @@ class RequestBodyTest extends BaseTest
                 ['string', 'customFormat', new CustomFormat2()],
             ],
             'body' => [
+                'foo'    => 'test',
+                'bar'    => 123,
+                'person' => [
+                ],
+                'custom' => 'OK',
+            ],
+            'options'      => [
+                'strictEmptyArrayValidation' => true,
+            ],
+        ]);
+        $json = $this->json($response);
+        $errors = $json['errors'];
+        $this->assertSame('error_type', $errors[0]['code']);
+        $this->assertSame('body', $errors[0]['in']);
+        $this->assertSame('person', $errors[0]['name']);
+
+        $response = $this->response('post', '/request/body', [
+            'formats' => [
+                ['string', 'customFormat', new CustomFormat2()],
+            ],
+            'body' => [
                 'foo'    => 123,
                 'bar'    => 'test',
                 'person' => [
