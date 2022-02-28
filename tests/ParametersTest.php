@@ -114,7 +114,6 @@ class ParametersTest extends BaseTest
                 'integer'      => 10,
                 'phone'        => '+358501234567',
                 'email'        => 'foo@bar.com',
-                'ends-with'    => 'test@gmail.com',
                 'between'      => 15,
                 'country-code' => 'FI',
                 'customFormat' => 'OK',
