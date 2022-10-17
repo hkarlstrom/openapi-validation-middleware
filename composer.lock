@@ -4,27 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "654531e5adb29855eca5b583b96c9e73",
+    "content-hash": "68b90e7d46e446fc46b010cc9168f71a",
     "packages": [
         {
             "name": "ckr/arraymerger",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ckressibucher/array_merger.git",
-                "reference": "ac3d3a011088df46574d33bf1fdad2f829ef6ee9"
+                "reference": "e9ac57360ca8c3002a674fdca9fd0b527dd5b651"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ckressibucher/array_merger/zipball/ac3d3a011088df46574d33bf1fdad2f829ef6ee9",
-                "reference": "ac3d3a011088df46574d33bf1fdad2f829ef6ee9",
+                "url": "https://api.github.com/repos/ckressibucher/array_merger/zipball/e9ac57360ca8c3002a674fdca9fd0b527dd5b651",
+                "reference": "e9ac57360ca8c3002a674fdca9fd0b527dd5b651",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "php": ">=7.0"
             },
             "require-dev": {
-                "phpspec/phpspec": "~2.1"
+                "phpspec/phpspec": "~7.2"
             },
             "type": "library",
             "autoload": {
@@ -45,9 +45,9 @@
             "description": "Provides functionality to merge arrays recursively",
             "support": {
                 "issues": "https://github.com/ckressibucher/array_merger/issues",
-                "source": "https://github.com/ckressibucher/array_merger/tree/master"
+                "source": "https://github.com/ckressibucher/array_merger/tree/3.0.0"
             },
-            "time": "2016-03-10T09:47:33+00:00"
+            "time": "2022-04-23T20:26:40+00:00"
         },
         {
             "name": "hkarlstrom/openapi-reader",
@@ -3266,5 +3266,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }

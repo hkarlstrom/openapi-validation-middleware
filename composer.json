@@ -19,7 +19,7 @@
     "require": {
         "php": "^7.1||^8",
         "ext-json": "*",
-        "ckr/arraymerger": "^2.0",
+        "ckr/arraymerger": "^2.0|^3.0",
         "hkarlstrom/openapi-reader": "^0.4",
         "opis/json-schema": "^1.0",
         "psr/http-message": "^1.0",
