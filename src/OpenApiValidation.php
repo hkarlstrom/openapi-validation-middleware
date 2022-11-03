@@ -21,9 +21,9 @@ use HKarlstrom\Middleware\OpenApiValidation\Helpers\Json as JsonHelper;
 use HKarlstrom\Middleware\OpenApiValidation\Helpers\Schema as SchemaHelper;
 use HKarlstrom\Middleware\OpenApiValidation\Property;
 use HKarlstrom\OpenApiReader\OpenApiReader;
-use Opis\JsonSchema\FormatContainer;
-use Opis\JsonSchema\ValidationError;
 use Opis\JsonSchema\Validator;
+use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Resolvers\FormatResolver;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -54,7 +54,11 @@ class OpenApiValidation implements MiddlewareInterface
         'validateResponseHeaders' => false,
         'strictEmptyArrayValidation' => false
     ];
-    private $formatContainer;
+
+    /** @var Validator */
+    private $validator;
+    /** @var FormatResolver */
+    private $formatResolver;
 
     /**
      * @param string|array $schema
@@ -74,14 +78,19 @@ class OpenApiValidation implements MiddlewareInterface
                 throw new InvalidOptionException($option);
             }
         }
-        $this->formatContainer = new FormatContainer();
+
+        $this->validator = new Validator();
+
+        $this->formatResolver = $this->validator->parser()->getFormatResolver();
+
         // Password validator only checks that it's a string, as format=password only is a hint to the UI
-        $this->formatContainer->add('string', 'password', new OpenApiValidation\Formats\PasswordValidator());
+        $this->formatResolver->register("string", "password", new OpenApiValidation\Formats\PasswordValidator());
+
     }
 
-    public function addFormat(string $type, string $name, \Opis\JsonSchema\IFormat $format)
+    public function addFormat(string $type, string $name, \Opis\JsonSchema\Format $format)
     {
-        $this->formatContainer->add($type, $name, $format);
+        $this->formatResolver->register($type, $name, $format);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
@@ -290,9 +299,9 @@ class OpenApiValidation implements MiddlewareInterface
 
     private function checkFormat(string $type, string $format)
     {
-        if (null === $this->formatContainer->get($type, $format)) {
+        if (null === $this->formatResolver->resolve($type, $format)) {
             try {
-                $this->formatContainer->add($type, $format, new OpenApiValidation\Formats\RespectValidator($format));
+                $this->formatResolver->register($type, $format, new OpenApiValidation\Formats\RespectValidator($format));
             } catch (Exception $e) {
                 if ($this->options['missingFormatException']) {
                     throw new MissingFormatException($type, $format);
@@ -350,8 +359,7 @@ class OpenApiValidation implements MiddlewareInterface
                 $this->checkFormat($type, $property->schema->format);
             }
         }
-        $validator = new Validator();
-        $validator->setFormats($this->formatContainer);
+
         foreach ($properties as $property) {
             if (null === $property->value) {
                 if ($property->required) {
@@ -366,32 +374,32 @@ class OpenApiValidation implements MiddlewareInterface
             }
             try {
                 $value  = json_decode(json_encode($property->value, JSON_PRESERVE_ZERO_FRACTION));
-                $result = $validator->dataValidation($value, $property->schema, 99);
+                $result = $this->validator->validate($value, $property->schema);
             } catch (Exception $e) {
             }
-            if (isset($result) && !$result->isValid()) {
-                foreach ($result->getErrors() as $error) {
-                    foreach ($this->parseErrors($error, $property->name, $property->in) as $parsedError) {
-                        // As all query param values are strings type errors should be discarded
-                        $discard = false;
-                        if ('query' === $parsedError['in']
-                            && 'error_type' === $parsedError['code']
-                            && 'string' === $parsedError['used']) {
-                            if ('integer' === $parsedError['expected']
-                                && preg_match('/^[0-9]$/', $parsedError['value'])) {
-                                $discard = true;
-                            } elseif ('boolean' === $parsedError['expected']
-                                && in_array(mb_strtolower($parsedError['value']), ['0', '1', 'true', 'false'])) {
-                                $discard = true;
-                            }
+            if (isset($result) && $result->hasError()) {
+                $error = $this->parseErrors($result->error(), $property->name, $property->in);
+                foreach ($error as $parsedError) {
+                    // As all query param values are strings type errors should be discarded
+                    $discard = false;
+                    if ('query' === $parsedError['in']
+                        && 'error_type' === $parsedError['code']
+                        && 'string' === $parsedError['used']) {
+                        if ('integer' === $parsedError['expected']
+                            && preg_match('/^[0-9]$/', $parsedError['value'])) {
+                            $discard = true;
+                        } elseif ('boolean' === $parsedError['expected']
+                            && in_array(mb_strtolower($parsedError['value']), ['0', '1', 'true', 'false'])) {
+                            $discard = true;
                         }
-                        if (!$discard) {
-                            $errors[] = $parsedError;
-                        }
+                    }
+                    if (!$discard) {
+                        $errors[] = $parsedError;
                     }
                 }
             }
-        }
+            }
+
         return $errors;
     }
 
@@ -401,13 +409,12 @@ class OpenApiValidation implements MiddlewareInterface
         foreach (SchemaHelper::getFormats($schema) as $f) {
             $this->checkFormat($f['type'], $f['format']);
         }
-        $validator = new Validator();
-        $validator->setFormats($this->formatContainer);
+
         $schema = SchemaHelper::openApiToJsonSchema($schema);
         try {
             $value  = json_decode($value);
             $schema = json_decode(json_encode($schema, JSON_PRESERVE_ZERO_FRACTION));
-            $result = $validator->dataValidation($value, $schema, 99);
+            $result = $this->validator->validate($value, $schema);
         } catch (Exception $e) {
             return [[
                 'name'    => 'server',
@@ -416,10 +423,8 @@ class OpenApiValidation implements MiddlewareInterface
             ]];
             return [$e->getMessage()];
         }
-        if (!$result->isValid()) {
-            foreach ($result->getErrors() as $error) {
-                $errors = array_merge($errors, $this->parseErrors($error, null, 'body'));
-            }
+        if ($result->hasError()) {
+            return $this->parseErrors($result->error(), null, 'body');
         }
         return $errors;
     }
@@ -536,13 +541,13 @@ class OpenApiValidation implements MiddlewareInterface
     private function parseErrors(ValidationError $error, $name = null, $in = null) : array
     {
         $errors = [];
-        if ($error->subErrorsCount()) {
+        if ($error->subErrors()) {
             foreach ($error->subErrors() as $subError) {
                 $errors = array_merge($errors, $this->parseErrors($subError, $name, $in));
             }
         } else {
-            if ($error->dataPointer()) {
-                $name = trim($name.'.'.implode('.', $error->dataPointer()), '.');
+            if ($error->data()->fullPath()) {
+                $name = trim($name.'.'.implode('.', $error->data()->fullPath()), '.');
             }
             $err = [
                 'name'  => $name,
@@ -552,7 +557,7 @@ class OpenApiValidation implements MiddlewareInterface
             if ($in) {
                 $err['in'] = $in;
             }
-            foreach ($error->keywordArgs() as $attr => $value) {
+            foreach ($error->args() as $attr => $value) {
                 $err[$attr] = $value;
             }
             if ('error_required' == $err['code']) {
