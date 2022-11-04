@@ -299,7 +299,7 @@ class OpenApiValidation implements MiddlewareInterface
 
     private function checkFormat(string $type, string $format)
     {
-        if (null === $this->formatResolver->resolve($type, $format)) {
+        if (null === $this->formatResolver->resolve($format, $type)) {
             try {
                 $this->formatResolver->register($type, $format, new OpenApiValidation\Formats\RespectValidator($format));
             } catch (Exception $e) {
