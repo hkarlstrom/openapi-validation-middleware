@@ -232,7 +232,7 @@ class OpenApiValidation implements MiddlewareInterface
             foreach ($errors as $error) {
                 if ('error_additional' == $error['code']) {
                     $responseBodyData = JsonHelper::remove($responseBodyData, explode('.', $error['name']));
-                } elseif ('error_type' == $error['code'] && 'null' == $error['used'] && null === $error['value']) {
+                } elseif ('error_type' == $error['code'] && 'null' == $error['type'] && null === $error['value']) {
                     $responseBodyData = JsonHelper::remove($responseBodyData, explode('.', $error['name']));
                 } else {
                     $notAdditionalOrNullErrors[] = $error;
@@ -384,7 +384,7 @@ class OpenApiValidation implements MiddlewareInterface
                     $discard = false;
                     if ('query' === $parsedError['in']
                         && 'error_type' === $parsedError['code']
-                        && 'string' === $parsedError['used']) {
+                        && 'string' === $parsedError['type']) {
                         if ('integer' === $parsedError['expected']
                             && preg_match('/^[0-9]$/', $parsedError['value'])) {
                             $discard = true;
@@ -447,7 +447,7 @@ class OpenApiValidation implements MiddlewareInterface
                             'name'     => $name,
                             'code'     => 'error_content_type',
                             'expected' => 1 === count($types) ? $types[0] : $types,
-                            'used'     => $uploaded->getClientMediaType(),
+                            'type'     => $uploaded->getClientMediaType(),
                         ];
                     }
                 }
@@ -552,7 +552,7 @@ class OpenApiValidation implements MiddlewareInterface
             $err = [
                 'name'  => $name,
                 'code'  => 'error_'.$error->keyword(),
-                'value' => $error->data(),
+                'value' => $error->data()->value(),
             ];
             if ($in) {
                 $err['in'] = $in;
@@ -561,7 +561,7 @@ class OpenApiValidation implements MiddlewareInterface
                 $err[$attr] = $value;
             }
             if ('error_required' == $err['code']) {
-                $err['name'] .= mb_strlen($err['name']) ? '.'.$err['missing'] : $err['missing'];
+                $err['name'] .= ($err['name'] && mb_strlen($err['name'])) ? '.'.array_shift($err['missing']) : array_shift($err['missing']);
                 unset($err['missing'],$err['value']);
             }
             if ('error_'.'$'.'schema' == $err['code']) {
@@ -573,7 +573,7 @@ class OpenApiValidation implements MiddlewareInterface
             // As the request body is parsed as an array, empty object and empty array will both be []
             // Remove these errors
             if (!$this->options['strictEmptyArrayValidation']) {
-                if ('error_type' == $err['code'] && empty($err['value']) && 'object' == $err['expected'] && 'array' == $err['used']) {
+                if ('error_type' == $err['code'] && empty($err['value']) && 'object' == $err['expected'] && 'array' == $err['type']) {
                     return [];
                 }
             }
