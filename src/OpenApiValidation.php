@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2018 Henrik Karlström
  * @license   MIT
  */
-
 namespace HKarlstrom\Middleware;
 
 use Exception;
@@ -39,19 +38,19 @@ class OpenApiValidation implements MiddlewareInterface
 
     private $openapi;
     private $options = [
-        'additionalParameters'    => false,
-        'beforeHandler'           => null,
-        'errorHandler'            => null,
-        'exampleResponse'         => false,
-        'missingFormatException'  => true,
-        'pathNotFoundException'   => true,
-        'setDefaultParameters'    => false,
-        'stripResponse'           => false,
-        'stripResponseHeaders'    => false,
-        'validateError'           => false,
-        'validateRequest'         => true,
-        'validateResponse'        => true,
-        'validateResponseHeaders' => false,
+        'additionalParameters'       => false,
+        'beforeHandler'              => null,
+        'errorHandler'               => null,
+        'exampleResponse'            => false,
+        'missingFormatException'     => true,
+        'pathNotFoundException'      => true,
+        'setDefaultParameters'       => false,
+        'stripResponse'              => false,
+        'stripResponseHeaders'       => false,
+        'validateError'              => false,
+        'validateRequest'            => true,
+        'validateResponse'           => true,
+        'validateResponseHeaders'    => false,
         'strictEmptyArrayValidation' => false
     ];
     private $formatContainer;
@@ -316,7 +315,8 @@ class OpenApiValidation implements MiddlewareInterface
                         $parameter->in,
                         $parameter->style,
                         $parameter->explode,
-                        $queryParams[$name]);
+                        $queryParams[$name]
+                    );
                     $request = $request->withQueryParams($queryParams);
                 }
             }
@@ -430,7 +430,7 @@ class OpenApiValidation implements MiddlewareInterface
         $formData      = $request->getParsedBody();
         $properties    = [];
         $uploadedFiles = $request->getUploadedFiles();
-        $schema = SchemaHelper::openApiToJsonSchema($schema);
+        $schema        = SchemaHelper::openApiToJsonSchema($schema);
         foreach ($schema['properties'] as $name => $property) {
             if (isset($property['format']) && in_array($property['format'], ['binary', 'base64'])) {
                 if (in_array($name, $schema['required'] ?? []) && !isset($uploadedFiles[$name])) {
@@ -556,7 +556,7 @@ class OpenApiValidation implements MiddlewareInterface
                 $err[$attr] = $value;
             }
             if ('error_required' == $err['code']) {
-                $err['name'] .= mb_strlen($err['name']) ? '.'.$err['missing'] : $err['missing'];
+                $err['name'] .= mb_strlen($err['name'] ?? '') ? '.'.$err['missing'] : $err['missing'];
                 unset($err['missing'],$err['value']);
             }
             if ('error_'.'$'.'schema' == $err['code']) {

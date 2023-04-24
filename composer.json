@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^7.1||^8",
+        "php": "^8.2",
         "ext-json": "*",
         "ckr/arraymerger": "^2.0|^3.0",
         "hkarlstrom/openapi-reader": "^0.4",
@@ -31,7 +31,8 @@
     "require-dev": {
         "phpstan/phpstan": "^0.12.74",
         "phpunit/phpunit": "^7||^9",
-        "slim/slim": "^3.11"
+        "slim/psr7": "^1.6",
+        "slim/slim": "^4"
     },
     "autoload": {
         "psr-4": {
