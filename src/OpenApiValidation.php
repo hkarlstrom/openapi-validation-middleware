@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2018 Henrik Karlström
  * @license   MIT
  */
-
 namespace HKarlstrom\Middleware;
 
 use Exception;
@@ -39,20 +38,21 @@ class OpenApiValidation implements MiddlewareInterface
 
     private $openapi;
     private $options = [
-        'additionalParameters'    => false,
-        'beforeHandler'           => null,
-        'errorHandler'            => null,
-        'exampleResponse'         => false,
-        'missingFormatException'  => true,
-        'pathNotFoundException'   => true,
-        'setDefaultParameters'    => false,
-        'stripResponse'           => false,
-        'stripResponseHeaders'    => false,
-        'validateError'           => false,
-        'validateRequest'         => true,
-        'validateResponse'        => true,
-        'validateResponseHeaders' => false,
-        'strictEmptyArrayValidation' => false
+        'additionalParameters'       => false,
+        'beforeHandler'              => null,
+        'errorHandler'               => null,
+        'exampleResponse'            => false,
+        'missingFormatException'     => true,
+        'pathNotFoundException'      => true,
+        'setDefaultParameters'       => false,
+        'stripResponse'              => false,
+        'stripResponseHeaders'       => false,
+        'validateError'              => false,
+        'validateRequest'            => true,
+        'validateResponse'           => true,
+        'validateResponseHeaders'    => false,
+        'strictEmptyArrayValidation' => false,
+        'validateSecurity'           => null
     ];
 
     /** @var Validator */
@@ -71,6 +71,7 @@ class OpenApiValidation implements MiddlewareInterface
         }
         $this->openapi = new OpenApiReader($schema);
         $allOptions    = array_keys($this->options);
+
         foreach ($options as $option => $value) {
             if (in_array($option, $allOptions)) {
                 $this->options[$option] = $value;
@@ -98,6 +99,7 @@ class OpenApiValidation implements MiddlewareInterface
         $method         = mb_strtolower($request->getMethod());
         $pathParameters = [];
         $path           = $this->openapi->getPathFromUri($request->getRequestTarget(), $method, $pathParameters);
+
         // Id cors preflight request, dont do anything
         if ('options' == $method && $request->hasHeader('HTTP_ACCESS_CONTROL_REQUEST_METHOD')) {
             return $handler->handle($request);
@@ -108,6 +110,10 @@ class OpenApiValidation implements MiddlewareInterface
         }
         if (null === $path) {
             return $handler->handle($request);
+        }
+
+        if (null !== $this->options['validateSecurity'] && $response = $this->validateSecurity($path, $method)) {
+            return $response;
         }
         if ($this->options['validateRequest']
             && $errors = $this->validateRequest($request, $path, $method, $pathParameters)) {
@@ -148,6 +154,22 @@ class OpenApiValidation implements MiddlewareInterface
         }
 
         return $response;
+    }
+
+    public function validateSecurity(string $path, string $method) : ?ResponseInterface
+    {
+        $security = $this->openapi->getOperationSecurity($path, $method);
+        if (!count($security)) return null;
+        $callback = $this->options['validateSecurity'];
+        foreach ($security as $security_) {
+            foreach ($security_ as $name => $scopes) {
+                $securitySceme = $this->openapi->getSecurityScheme($name);
+                if ($response = $callback($this->openapi->getSecurityScheme($name), $scopes)) {
+                    return $response;
+                }
+            }
+        }
+        return null;
     }
 
     public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : array
@@ -325,7 +347,8 @@ class OpenApiValidation implements MiddlewareInterface
                         $parameter->in,
                         $parameter->style,
                         $parameter->explode,
-                        $queryParams[$name]);
+                        $queryParams[$name]
+                    );
                     $request = $request->withQueryParams($queryParams);
                 }
             }
@@ -435,7 +458,7 @@ class OpenApiValidation implements MiddlewareInterface
         $formData      = $request->getParsedBody();
         $properties    = [];
         $uploadedFiles = $request->getUploadedFiles();
-        $schema = SchemaHelper::openApiToJsonSchema($schema);
+        $schema        = SchemaHelper::openApiToJsonSchema($schema);
         foreach ($schema['properties'] as $name => $property) {
             if (isset($property['format']) && in_array($property['format'], ['binary', 'base64'])) {
                 if (in_array($name, $schema['required'] ?? []) && !isset($uploadedFiles[$name])) {

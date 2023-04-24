@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2018 Henrik Karlström
  * @license   MIT
  */
-
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
 use Opis\JsonSchema\Format;
@@ -58,7 +57,7 @@ class RequestBodyTest extends BaseTest
                 'strictEmptyArrayValidation' => true,
             ],
         ]);
-        $json = $this->json($response);
+        $json   = $this->json($response);
         $errors = $json['errors'];
         $this->assertSame('error_type', $errors[0]['code']);
         $this->assertSame('body', $errors[0]['in']);
@@ -244,6 +243,5 @@ class RequestBodyTest extends BaseTest
         $this->assertSame(200, $response->getStatusCode());
         $this->assertTrue($json['ok']);
         $this->assertArrayNotHasKey('errors', $json);
-
     }
 }

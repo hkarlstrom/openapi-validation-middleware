@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2018 Henrik Karlström
  * @license   MIT
  */
-
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
 use Opis\JsonSchema\Format;
@@ -80,7 +79,7 @@ class ParametersTest extends BaseTest
 
         $response = $this->response('get', '/parameters', ['query' => ['boolean' => 'hello', 'foo' => 'aaa']]);
         $json     = $this->json($response);
-        $error = $json['errors'][0];
+        $error    = $json['errors'][0];
         $this->assertSame(400, $response->getStatusCode());
         $this->assertSame('boolean', $error['expected']);
         $this->assertSame('hello', $error['value']);
@@ -161,7 +160,8 @@ class ParametersTest extends BaseTest
             ],
             'customHandler' => function ($request, $response) {
                 $query = $request->getQueryParams();
-                return $response->withJson(['ok' => 50 === ($query['default'] ?? null)]);
+                $response->getBody()->write(json_encode(['ok' => 50 === ($query['default'] ?? null)]));
+                return $response->withHeader('Content-type', 'application/json');
             },
         ];
         $response = $this->response('get', '/parameters', $args);
