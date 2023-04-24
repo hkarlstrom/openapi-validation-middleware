@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2018 Henrik Karlström
  * @license   MIT
  */
-
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
 class RequestHeaderTest extends BaseTest
@@ -16,8 +15,8 @@ class RequestHeaderTest extends BaseTest
     public function testHeaderRequiredMissing()
     {
         $response = $this->response('get', '/headers', []);
-        $json = $this->json($response);
-        $error = $json['errors'][0];
+        $json     = $this->json($response);
+        $error    = $json['errors'][0];
         $this->assertSame('X-Required', $error['name']);
         $this->assertSame('error_required', $error['code']);
         $this->assertSame('header', $error['in']);
@@ -27,14 +26,15 @@ class RequestHeaderTest extends BaseTest
     {
         $options = [
             'headers' => [
-                'X-Required' => "999999"
+                'X-Required' => '999999'
             ]
         ];
 
         $response = $this->response('get', '/headers', $options);
-        $json = $this->json($response);
+        $json     = $this->json($response);
 
         $error = $json['errors'][0];
+
         $this->assertSame('X-Required', $error['name']);
         $this->assertSame('error_pattern', $error['code']);
         $this->assertSame('header', $error['in']);
@@ -44,12 +44,12 @@ class RequestHeaderTest extends BaseTest
     {
         $options = [
             'headers' => [
-                'X-Required' => "TST"
+                'X-Required' => 'TST'
             ]
         ];
 
         $response = $this->response('get', '/headers', $options);
-        $json = $this->json($response);
+        $json     = $this->json($response);
         $this->assertTrue($json['ok']);
         $this->assertSame(200, $response->getStatusCode());
     }

@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2018 Henrik Karlström
  * @license   MIT
  */
-
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,7 +23,8 @@ class BeforeHandlerTest extends BaseTest
                 },
             ],
             'customHandler' => function ($request, $response) {
-                $response = $response->withJson(['ok' => true]);
+                $response->getBody()->write(json_encode(['ok' => true]));
+                $response = $response->withHeader('Content-type', 'application/json');
                 $response = $response->withHeader('X-ERROR', $request->getAttribute('error'));
                 return $response;
             },

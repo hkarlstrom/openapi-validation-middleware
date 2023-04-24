@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.1",
         "ext-json": "*",
         "ckr/arraymerger": "^2.0|^3.0",
         "hkarlstrom/openapi-reader": "^0.4",

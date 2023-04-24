@@ -15,6 +15,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
+class TextResponseException extends \Exception
+{
+}
+
 abstract class BaseTest extends TestCase
 {
     protected $openapiFile = __DIR__.'/testapi.json';
@@ -38,12 +42,22 @@ abstract class BaseTest extends TestCase
 
         $serverRequestFactory = new \Slim\Psr7\Factory\ServerRequestFactory();
 
-        $headers = new \Slim\Psr7\Headers([]);
+        $headerArgs = $args['headers'] ?? [];
+        if (!isset($headerArgs['Content-type'])) {
+            $headerArgs['Content-type'] = 'application/json;charset=utf8';
+        }
+
+        $headers = new \Slim\Psr7\Headers($headerArgs);
+
         $cookies = [];
 
-        $cacheResource = fopen('php://temp', 'wb+');
-        $cache         = $cacheResource ? new \Slim\Psr7\Stream($cacheResource) : null;
-        $body          = (new \Slim\Psr7\Factory\StreamFactory())->createStreamFromFile('php://input', 'r', $cache);
+        if (isset($args['body'])) {
+            $body = (new \Slim\Psr7\Factory\StreamFactory())->createStream(is_array($args['body']) ? json_encode($args['body']) : $args['body']);
+        } else {
+            $cacheResource = fopen('php://temp', 'wb+');
+            $cache         = $cacheResource ? new \Slim\Psr7\Stream($cacheResource) : null;
+            $body          = (new \Slim\Psr7\Factory\StreamFactory())->createStreamFromFile('php://input', 'w+', $cache);
+        }
         $uploadedFiles = [];
 
         $request = new \Slim\Psr7\Request($method, $uri, $headers, $cookies, $_SERVER, $body, $uploadedFiles);
@@ -69,29 +83,6 @@ abstract class BaseTest extends TestCase
         //     return $request->withParsedBody($_POST);
         // }
 
-        // $env = Environment::mock();
-        // $request = Request::createFromEnvironment($env);
-
-        // if (isset($args['body'])) {
-        //     if (is_array($args['body'])) {
-        //         $request->getBody()->write(json_encode($args['body']));
-        //     } else {
-        //         $request->getBody()->write($args['body']);
-        //     }
-        //     $request->getBody()->rewind();
-        //     $request = $request->withHeader('Content-Type', $args['bodyContentType'] ?? 'application/json');
-        // }
-        // if (isset($args['cors'])) {
-        //     $request = $request->withHeader('Access-Control-Request-Method', 'GET');
-        // }
-
-        // if (isset($args['headers'])) {
-        //     foreach ($args['headers'] as $header => $value) {
-        //         $request = $request->withHeader($header, $value);
-        //     }
-        // }
-        //$app               = new App(['request' => $request, 'settings' => ['determineRouteBeforeAppMiddleware' => true]]);
-
         // $c                 = $app->getContainer();
         // $c['errorHandler'] = function ($c) {
         //     return function ($request, $response, $exception) use ($c) {
@@ -101,6 +92,7 @@ abstract class BaseTest extends TestCase
 
         if ($args['emptyHandler'] ?? false) {
             $callback = function ($request, $response) {
+                return $response;
             };
         } elseif ($args['customHandler'] ?? false) {
             $callback = $args['customHandler'];
@@ -121,12 +113,15 @@ abstract class BaseTest extends TestCase
         $response = null;
         $app->add(function (\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler) use (&$response) {
             $response = $handler->handle($request);
-            throw new \Exception('stop');
+            throw new TextResponseException('stop');
             return $response;
         });
-        try {
+
+        if (isset($args['cors'])) {
+            $request = $request->withHeader('Access-Control-Request-Method', 'GET');
+        } try {
             $app->run($request);
-        } catch (\Exception $e) {
+        } catch (TextResponseException $e) {
             return $response;
         }
     }

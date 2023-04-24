@@ -8,11 +8,10 @@
  * @copyright Copyright (c) 2018 Henrik Karlström
  * @license   MIT
  */
-
 namespace HKarlstrom\Middleware\OpenApiValidation;
 
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Response as SlimResponse;
+use Slim\Psr7\Response;
 
 class ErrorHandlerTest extends BaseTest
 {
@@ -20,12 +19,12 @@ class ErrorHandlerTest extends BaseTest
     {
         $response = $this->response('get', '/parameters', ['options' => [
             'errorHandler' => function (int $code, string $message, array $errors) : ResponseInterface {
-                $response = new SlimResponse($code);
-                $response = $response->withJson([
+                $response = new Response($code);
+                $response->getBody()->write(json_encode([
                     'message' => 'custom error',
                     'errors'  => $errors,
-                ]);
-                return $response;
+                ]));
+                return $response->withHeader('Content-type', 'application/json');
             },
         ]]);
         $json = $this->json($response);
