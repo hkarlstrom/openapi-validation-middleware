@@ -21,7 +21,6 @@
         "ext-json": "*",
         "ckr/arraymerger": "^2.0|^3.0",
         "hkarlstrom/openapi-reader": "^0.5",
-        "opis/json-schema": "^1.0",
         "psr/http-message": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "respect/validation": "^1.1",
