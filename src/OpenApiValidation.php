@@ -81,11 +81,16 @@ class OpenApiValidation implements MiddlewareInterface
         }
 
         $this->validator = new Validator();
+        $this->validator->setMaxErrors(99); 
 
         $this->formatResolver = $this->validator->parser()->getFormatResolver();
 
         // Password validator only checks that it's a string, as format=password only is a hint to the UI
         $this->formatResolver->register("string", "password", new OpenApiValidation\Formats\PasswordValidator());
+        
+        
+        // Register our prime number format
+        $formats->registerCallable("integer", "prime", $isPrime);
 
     }
 
@@ -401,7 +406,8 @@ class OpenApiValidation implements MiddlewareInterface
             } catch (Exception $e) {
             }
             if (isset($result) && $result->hasError()) {
-                $error = $this->parseErrors($result->error(), $property->name, $property->in);
+                $error = $this->parseErrors($result->error(), $property->name, $property->in, $property);
+            
                 foreach ($error as $parsedError) {
                     // As all query param values are strings type errors should be discarded
                     $discard = false;
@@ -437,7 +443,7 @@ class OpenApiValidation implements MiddlewareInterface
         try {
             $value  = json_decode($value);
             $schema = json_decode(json_encode($schema, JSON_PRESERVE_ZERO_FRACTION));
-            $result = $this->validator->validate($value, $schema);
+            $result = $this->validator->validate($value, $schema,);
         } catch (Exception $e) {
             return [[
                 'name'    => 'server',
@@ -561,7 +567,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $response->withBody((new StreamFactory())->createStream(json_encode($json, JSON_PRESERVE_ZERO_FRACTION)));
     }
 
-    private function parseErrors(ValidationError $error, $name = null, $in = null) : array
+    private function parseErrors(ValidationError $error, $name = null, $in = null, ?Property $property = null ) : array
     {
         $errors = [];
         if ($error->subErrors()) {
@@ -587,11 +593,17 @@ class OpenApiValidation implements MiddlewareInterface
                 $err['name'] .= ($err['name'] && mb_strlen($err['name'])) ? '.'.array_shift($err['missing']) : array_shift($err['missing']);
                 unset($err['missing'],$err['value']);
             }
+            if ('error_enum' == $err['code'] && isset($property->schema->enum)) {
+                $err['expected'] = $property->schema->enum;
+            }
             if ('error_'.'$'.'schema' == $err['code']) {
                 // This is a quickfix as the opis/json-schema wont give any other error message
                 // There should not be any other reason this error_$schema occurs
                 $err['code'] = 'error_additional';
                 unset($err['schema']);
+            }
+            if (isset($err['expected']) && !isset($err['used']) && isset($err['type'])) {
+                $err['used'] = $err['type'];
             }
             // As the request body is parsed as an array, empty object and empty array will both be []
             // Remove these errors
