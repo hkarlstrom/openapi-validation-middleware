@@ -69,6 +69,7 @@ $app->add(new HKarlstrom\Middleware\OpenApiValidation('/path/to/openapi.json'),[
 | validateRequest            | bool      | true    | Should the request be validated |
 | validateResponse           | bool      | true    | Should the response's body be validated |
 | validateResponseHeaders    | bool      | false   | Should the response's headers be validated |
+| validateSecurity           | callable  | null    | Instructions [below](README.md#validateSecurity) |
 
 
 #### beforeHandler
@@ -89,6 +90,22 @@ $options = [
     'errorHandler' => function (int $code, string $message, array $errors) : \Psr\Http\Message\ResponseInterface {
         // Alter request
         return $request
+    }
+];
+```
+
+#### validateSecurity
+If defined, the callback can return Psr\Http\Message\ResponseInterface if the operation is not allowed.
+
+```php
+$options = [
+    'validateSecurity' => function (\HKarlstrom\OpenApiReader\Objects\SecurityScheme $securityScheme, ?array $scopes) : ?\Psr\Http\Message\ResponseInterface {
+        // if user is authorized
+        return null;
+
+        // create and return error response
+        $response = new Response( ... );
+        return $response;
     }
 ];
 ```

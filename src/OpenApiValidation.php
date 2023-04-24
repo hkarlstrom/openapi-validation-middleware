@@ -51,7 +51,8 @@ class OpenApiValidation implements MiddlewareInterface
         'validateRequest'            => true,
         'validateResponse'           => true,
         'validateResponseHeaders'    => false,
-        'strictEmptyArrayValidation' => false
+        'strictEmptyArrayValidation' => false,
+        'validateSecurity'           => null
     ];
     private $formatContainer;
 
@@ -66,6 +67,7 @@ class OpenApiValidation implements MiddlewareInterface
         }
         $this->openapi = new OpenApiReader($schema);
         $allOptions    = array_keys($this->options);
+
         foreach ($options as $option => $value) {
             if (in_array($option, $allOptions)) {
                 $this->options[$option] = $value;
@@ -88,6 +90,7 @@ class OpenApiValidation implements MiddlewareInterface
         $method         = mb_strtolower($request->getMethod());
         $pathParameters = [];
         $path           = $this->openapi->getPathFromUri($request->getRequestTarget(), $method, $pathParameters);
+
         // Id cors preflight request, dont do anything
         if ('options' == $method && $request->hasHeader('HTTP_ACCESS_CONTROL_REQUEST_METHOD')) {
             return $handler->handle($request);
@@ -98,6 +101,10 @@ class OpenApiValidation implements MiddlewareInterface
         }
         if (null === $path) {
             return $handler->handle($request);
+        }
+
+        if (null !== $this->options['validateSecurity'] && $response = $this->validateSecurity($path, $method)) {
+            return $response;
         }
         if ($this->options['validateRequest']
             && $errors = $this->validateRequest($request, $path, $method, $pathParameters)) {
@@ -138,6 +145,22 @@ class OpenApiValidation implements MiddlewareInterface
         }
 
         return $response;
+    }
+
+    public function validateSecurity(string $path, string $method) : ?ResponseInterface
+    {
+        $security = $this->openapi->getOperationSecurity($path, $method);
+        if (!count($security)) return null;
+        $callback = $this->options['validateSecurity'];
+        foreach ($security as $security_) {
+            foreach ($security_ as $name => $scopes) {
+                $securitySceme = $this->openapi->getSecurityScheme($name);
+                if ($response = $callback($this->openapi->getSecurityScheme($name), $scopes)) {
+                    return $response;
+                }
+            }
+        }
+        return null;
     }
 
     public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : array
