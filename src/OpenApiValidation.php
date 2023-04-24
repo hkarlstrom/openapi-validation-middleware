@@ -87,10 +87,6 @@ class OpenApiValidation implements MiddlewareInterface
 
         // Password validator only checks that it's a string, as format=password only is a hint to the UI
         $this->formatResolver->register("string", "password", new OpenApiValidation\Formats\PasswordValidator());
-        
-        
-        // Register our prime number format
-        $formats->registerCallable("integer", "prime", $isPrime);
 
     }
 
