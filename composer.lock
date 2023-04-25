@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bb95b5d9ca6c1cf8464160b88b2c2b72",
+    "content-hash": "b3958b52cf864d05293415519a56cd94",
     "packages": [
         {
             "name": "ckr/arraymerger",
