@@ -99,7 +99,7 @@ If defined, the callback can return Psr\Http\Message\ResponseInterface if the op
 
 ```php
 $options = [
-    'validateSecurity' => function (\HKarlstrom\OpenApiReader\Objects\SecurityScheme $securityScheme, ?array $scopes) : ?\Psr\Http\Message\ResponseInterface {
+    'validateSecurity' => function (ServerRequestInterface $request, \HKarlstrom\OpenApiReader\Objects\SecurityScheme $securityScheme, ?array $scopes) : ?\Psr\Http\Message\ResponseInterface {
         // if user is authorized
         return null;
 

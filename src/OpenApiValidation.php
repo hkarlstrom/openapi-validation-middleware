@@ -113,7 +113,7 @@ class OpenApiValidation implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        if (null !== $this->options['validateSecurity'] && $response = $this->validateSecurity($path, $method)) {
+        if (null !== $this->options['validateSecurity'] && $response = $this->validateSecurity($path, $method, $request)) {
             return $response;
         }
         if ($this->options['validateRequest']
@@ -157,7 +157,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $response;
     }
 
-    public function validateSecurity(string $path, string $method) : ?ResponseInterface
+    public function validateSecurity(string $path, string $method, ServerRequestInterface $request) : ?ResponseInterface
     {
         $security = $this->openapi->getOperationSecurity($path, $method);
         if (!count($security)) return null;
@@ -165,7 +165,7 @@ class OpenApiValidation implements MiddlewareInterface
         foreach ($security as $security_) {
             foreach ($security_ as $name => $scopes) {
                 $securitySceme = $this->openapi->getSecurityScheme($name);
-                if ($response = $callback($this->openapi->getSecurityScheme($name), $scopes)) {
+                if ($response = $callback($request, $this->openapi->getSecurityScheme($name), $scopes)) {
                     return $response;
                 }
             }
