@@ -159,17 +159,60 @@ class OpenApiValidation implements MiddlewareInterface
 
     public function validateSecurity(string $path, string $method, ServerRequestInterface $request) : ?ResponseInterface
     {
-        $security = $this->openapi->getOperationSecurity($path, $method);
-        if (!count($security)) return null;
+        $securityRequirements = $this->openapi->getOperationSecurity($path, $method);
+        if (!count($securityRequirements)) return null;
+
         $callback = $this->options['validateSecurity'];
-        foreach ($security as $security_) {
-            foreach ($security_ as $name => $scopes) {
+
+        // Check if request has provided any credentials
+        foreach ($securityRequirements as $requirement) {
+            foreach ($requirement as $name => $scopes) {
                 $securitySceme = $this->openapi->getSecurityScheme($name);
-                if ($response = $callback($request, $this->openapi->getSecurityScheme($name), $scopes)) {
-                    return $response;
+                switch ($securitySceme->type) {
+                    case 'http':
+                        $authorizationHeader = $request->getHeader('Authorization')[0] ?? false;
+                        if ($authorizationHeader) {
+                            // Remove basic or bearer
+                            $token = str_replace(ucwords($securitySceme->scheme).' ', '', $authorizationHeader);
+                            return $callback('http', $token, $scopes);
+                        }
+                        break;
+                    case 'apiKey':
+                        $token = false;
+                        switch ($securitySceme->in) {
+                            case 'query':
+                                $query = $request->getQueryParams();
+                                $token = $query[$securitySceme->name] ?? false;
+                                break;
+                            case 'header':
+                                $token = $request->getHeader($securitySceme->name)[0] ?? false;
+                                break;
+                            case 'cookie':
+                                $token = $_COOKIE[$securitySceme->name] ?? false;
+                                break;
+                        }
+                        if ($token) {
+                            return $callback('apiKey', $token, $scopes);
+                        }
+                        break;
                 }
             }
         }
+
+        return $callback('error');
+
+        
+
+
+        // $callback = $this->options['validateSecurity'];
+        // foreach ($security as $security_) {
+        //     foreach ($security_ as $name => $scopes) {
+        //         $securitySceme = $this->openapi->getSecurityScheme($name);
+        //         if ($response = $callback($request, $this->openapi->getSecurityScheme($name), $scopes)) {
+        //             return $response;
+        //         }
+        //     }
+        // }
         return null;
     }
 
