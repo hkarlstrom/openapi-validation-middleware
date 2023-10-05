@@ -198,22 +198,7 @@ class OpenApiValidation implements MiddlewareInterface
                 }
             }
         }
-
         return $callback('error');
-
-        
-
-
-        // $callback = $this->options['validateSecurity'];
-        // foreach ($security as $security_) {
-        //     foreach ($security_ as $name => $scopes) {
-        //         $securitySceme = $this->openapi->getSecurityScheme($name);
-        //         if ($response = $callback($request, $this->openapi->getSecurityScheme($name), $scopes)) {
-        //             return $response;
-        //         }
-        //     }
-        // }
-        return null;
     }
 
     public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : array
