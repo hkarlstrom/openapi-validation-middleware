@@ -81,13 +81,12 @@ class OpenApiValidation implements MiddlewareInterface
         }
 
         $this->validator = new Validator();
-        $this->validator->setMaxErrors(99); 
+        $this->validator->setMaxErrors(99);
 
         $this->formatResolver = $this->validator->parser()->getFormatResolver();
 
         // Password validator only checks that it's a string, as format=password only is a hint to the UI
-        $this->formatResolver->register("string", "password", new OpenApiValidation\Formats\PasswordValidator());
-
+        $this->formatResolver->register('string', 'password', new OpenApiValidation\Formats\PasswordValidator());
     }
 
     public function addFormat(string $type, string $name, \Opis\JsonSchema\Format $format)
@@ -160,7 +159,9 @@ class OpenApiValidation implements MiddlewareInterface
     public function validateSecurity(string $path, string $method, ServerRequestInterface $request) : ?ResponseInterface
     {
         $securityRequirements = $this->openapi->getOperationSecurity($path, $method);
-        if (!count($securityRequirements)) return null;
+        if (!count($securityRequirements)) {
+            return null;
+        }
 
         $callback = $this->options['validateSecurity'];
 
@@ -174,7 +175,7 @@ class OpenApiValidation implements MiddlewareInterface
                         if ($authorizationHeader) {
                             // Remove basic or bearer
                             $token = str_replace(ucwords($securitySceme->scheme).' ', '', $authorizationHeader);
-                            return $callback('http', $token, $scopes);
+                            return $callback($request, 'http', $token, $scopes);
                         }
                         break;
                     case 'apiKey':
@@ -192,7 +193,7 @@ class OpenApiValidation implements MiddlewareInterface
                                 break;
                         }
                         if ($token) {
-                            return $callback('apiKey', $token, $scopes);
+                            return $callback($request, 'apiKey', $token, $scopes);
                         }
                         break;
                 }
@@ -431,7 +432,7 @@ class OpenApiValidation implements MiddlewareInterface
             }
             if (isset($result) && $result->hasError()) {
                 $error = $this->parseErrors($result->error(), $property->name, $property->in, $property);
-            
+
                 foreach ($error as $parsedError) {
                     // As all query param values are strings type errors should be discarded
                     $discard = false;
@@ -451,7 +452,7 @@ class OpenApiValidation implements MiddlewareInterface
                     }
                 }
             }
-            }
+        }
 
         return $errors;
     }
@@ -467,7 +468,7 @@ class OpenApiValidation implements MiddlewareInterface
         try {
             $value  = json_decode($value);
             $schema = json_decode(json_encode($schema, JSON_PRESERVE_ZERO_FRACTION));
-            $result = $this->validator->validate($value, $schema,);
+            $result = $this->validator->validate($value, $schema, );
         } catch (Exception $e) {
             return [[
                 'name'    => 'server',
@@ -591,7 +592,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $response->withBody((new StreamFactory())->createStream(json_encode($json, JSON_PRESERVE_ZERO_FRACTION)));
     }
 
-    private function parseErrors(ValidationError $error, $name = null, $in = null, ?Property $property = null ) : array
+    private function parseErrors(ValidationError $error, $name = null, $in = null, ?Property $property = null) : array
     {
         $errors = [];
         if ($error->subErrors()) {

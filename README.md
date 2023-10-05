@@ -95,11 +95,11 @@ $options = [
 ```
 
 #### validateSecurity
-If defined, the callback can return Psr\Http\Message\ResponseInterface if the operation is not allowed. `$type` can be none, http or apiKey.
+If defined, the callback can return Psr\Http\Message\ResponseInterface if the operation is not allowed. `$type` can be `none`, `http` or `apiKey`.
 
 ```php
 $options = [
-    'validateSecurity' => function (string $type, string $token = '', ?array $scopes) : ?\Psr\Http\Message\ResponseInterface {
+    'validateSecurity' => function (ServerRequestInterface $request, string $type, string $token = '', ?array $scopes) : ?\Psr\Http\Message\ResponseInterface {
         // if user is authorized
         return null;
 
