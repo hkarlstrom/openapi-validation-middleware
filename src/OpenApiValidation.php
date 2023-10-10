@@ -199,7 +199,7 @@ class OpenApiValidation implements MiddlewareInterface
                 }
             }
         }
-        return $callback('error');
+        return $callback($request, 'error', '' ,[]);
     }
 
     public function validateResponseHeaders(ResponseInterface $response, string $path, string $method) : array
