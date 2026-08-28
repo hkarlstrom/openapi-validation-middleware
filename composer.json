@@ -20,7 +20,7 @@
         "php": "^8.1",
         "ext-json": "*",
         "ckr/arraymerger": "^2.0|^3.0",
-        "hkarlstrom/openapi-reader": "^0.5",
+        "hkarlstrom/openapi-reader": "^0.6",
         "opis/json-schema": "^2.3",
         "psr/http-message": "^1.0",
         "psr/http-server-middleware": "^1.0",
